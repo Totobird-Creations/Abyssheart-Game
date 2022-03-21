@@ -1,0 +1,17 @@
+[gd_resource type="SpatialMaterial" load_steps=3 format=2]
+
+[sub_resource type="OpenSimplexNoise" id=4]
+octaves = 1
+period = 128.0
+
+[sub_resource type="NoiseTexture" id=2]
+width = 1024
+height = 1024
+seamless = true
+noise = SubResource( 4 )
+
+[resource]
+albedo_color = Color( 0.372549, 0.247059, 0.121569, 1 )
+albedo_texture = SubResource( 2 )
+metallic_specular = 0.25
+roughness = 0.75

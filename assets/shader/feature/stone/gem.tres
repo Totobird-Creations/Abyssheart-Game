@@ -1,0 +1,26 @@
+[gd_resource type="SpatialMaterial" load_steps=5 format=2]
+
+[sub_resource type="OpenSimplexNoise" id=1]
+
+[sub_resource type="NoiseTexture" id=2]
+seamless = true
+noise = SubResource( 1 )
+
+[sub_resource type="OpenSimplexNoise" id=5]
+period = 8.0
+
+[sub_resource type="NoiseTexture" id=4]
+noise = SubResource( 5 )
+
+[resource]
+resource_local_to_scene = true
+flags_transparent = true
+flags_ensure_correct_normals = true
+albedo_color = Color( 1, 0, 0.967163, 0.875 )
+albedo_texture = SubResource( 2 )
+metallic = 0.45
+roughness = 0.03
+refraction_enabled = true
+refraction_scale = 0.1
+refraction_texture = SubResource( 4 )
+refraction_texture_channel = 0

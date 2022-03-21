@@ -1,0 +1,28 @@
+[gd_resource type="VoxelGeneratorScript" load_steps=6 format=2]
+
+[ext_resource path="res://main/game/generator/generator.gd" type="Script" id=1]
+
+[sub_resource type="Curve" id=4]
+_data = [ Vector2( 0, 0 ), 0.0, 0.481818, 0, 0, Vector2( 1, 1 ), 2.61617, 0.0, 0, 0 ]
+
+[sub_resource type="OpenSimplexNoise" id=3]
+period = 1.0
+
+[sub_resource type="OpenSimplexNoise" id=1]
+period = 1.0
+
+[sub_resource type="OpenSimplexNoise" id=2]
+seed = 1
+period = 1.0
+
+[resource]
+script = ExtResource( 1 )
+height_map = SubResource( 1 )
+height_max = 512.0
+height_scale = 2048.0
+roughness_map = SubResource( 2 )
+roughness_max = 32.0
+roughness_scale = 16.0
+flatness_map = SubResource( 3 )
+flatness_scale = 256.0
+flatness_curve = SubResource( 4 )
