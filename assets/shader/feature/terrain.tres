@@ -1,10 +1,13 @@
-shader_type spatial;
+[gd_resource type="ShaderMaterial" load_steps=10 format=2]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type spatial;
 
 
 
 uniform float     slope_factor    = 8.0;
-uniform float     snow_min        = 100.0;
-uniform float     snow_max        = 125.0;
+uniform float     snow_min        = 256.0;
+uniform float     snow_max        = 288.0;
 
 uniform sampler2D texture_grass;
 uniform sampler2D texture_dirt;
@@ -64,3 +67,43 @@ void fragment() {
 
 	ALBEDO = mixin;
 }
+"
+
+[sub_resource type="Gradient" id=4]
+offsets = PoolRealArray( 0, 0.5, 1 )
+colors = PoolColorArray( 0.247059, 0.121569, 0, 1, 0.498039, 0.247059, 0, 1, 0.247059, 0.121569, 0, 1 )
+
+[sub_resource type="GradientTexture" id=5]
+gradient = SubResource( 4 )
+
+[sub_resource type="Gradient" id=2]
+colors = PoolColorArray( 0.247059, 0.74902, 0, 1, 0.247059, 0.74902, 0, 1 )
+
+[sub_resource type="GradientTexture" id=3]
+gradient = SubResource( 2 )
+
+[sub_resource type="Gradient" id=8]
+offsets = PoolRealArray( 0, 0.5, 1 )
+colors = PoolColorArray( 0.87451, 1, 1, 1, 1, 1, 1, 1, 0.87451, 1, 1, 1 )
+
+[sub_resource type="GradientTexture" id=9]
+gradient = SubResource( 8 )
+
+[sub_resource type="Gradient" id=6]
+offsets = PoolRealArray( 0, 0.5, 1 )
+colors = PoolColorArray( 0.247059, 0.247059, 0.247059, 1, 0.372549, 0.372549, 0.372549, 1, 0.247059, 0.247059, 0.247059, 1 )
+
+[sub_resource type="GradientTexture" id=7]
+gradient = SubResource( 6 )
+
+[resource]
+shader = SubResource( 1 )
+shader_param/slope_factor = 8.0
+shader_param/snow_min = 256.0
+shader_param/snow_max = 288.0
+shader_param/texture_scale = Vector2( 1, 1 )
+shader_param/u_transition_mask = null
+shader_param/texture_grass = SubResource( 3 )
+shader_param/texture_dirt = SubResource( 5 )
+shader_param/texture_stone = SubResource( 7 )
+shader_param/texture_snow = SubResource( 9 )

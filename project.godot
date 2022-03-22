@@ -8,6 +8,16 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "KinematicBody",
+"class": "PlayerEntity",
+"language": "GDScript",
+"path": "res://main/game/entity/player/player.gd"
+} ]
+_global_script_class_icons={
+"PlayerEntity": ""
+}
+
 [application]
 
 config/name="Voxel Game Test"
@@ -16,6 +26,7 @@ config/icon="res://icon.png"
 
 [autoload]
 
+Tool="*res://main/tool.gd"
 DebugDraw="*res://addons/zylann.debug_draw/debug_draw.gd"
 
 [input]

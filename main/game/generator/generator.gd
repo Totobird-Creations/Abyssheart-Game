@@ -7,7 +7,7 @@ const                        channel    : int              = VoxelBuffer.CHANNEL
 
 export(OpenSimplexNoise) var height_map      : OpenSimplexNoise
 export(float)            var height_max      : float            = 512.0
-export(float)            var height_scale    : float            = 2048.0
+export(float)            var height_scale    : float            = 1024.0
 export(OpenSimplexNoise) var roughness_map   : OpenSimplexNoise
 export(float)            var roughness_max   : float            = 32.0
 export(float)            var roughness_scale : float            = 16.0

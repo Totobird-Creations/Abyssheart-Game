@@ -9,15 +9,20 @@ height = 1.5
 [node name="gem" type="StaticBody"]
 script = ExtResource( 1 )
 saturation = 0.75
-alpha = 0.001
+alpha = 0.75
+mesh_directory = "res://assets/model/feature/stone/gem/"
+mesh_extension = ".obj"
+independent = true
 
 [node name="mesh" type="Spatial" parent="."]
 transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
 
 [node name="light" type="OmniLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0 )
-light_color = Color( 0.514587, 1, 0.25, 0.001 )
+light_color = Color( 0.514587, 1, 0.25, 0.75 )
+light_bake_mode = 2
 shadow_enabled = true
+omni_attenuation = 5.0
 
 [node name="collision" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0 )

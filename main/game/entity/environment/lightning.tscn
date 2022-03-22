@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://main/game/entity/environment/lightning.gd" type="Script" id=1]
+[ext_resource path="res://assets/shader/entity/environment/lightning.tres" type="Material" id=2]
+
+[node name="lightning" type="Spatial"]
+script = ExtResource( 1 )
+end_pos = Vector3( 10, 10, 10 )
+
+[node name="geometry" type="ImmediateGeometry" parent="."]
+material_override = ExtResource( 2 )
