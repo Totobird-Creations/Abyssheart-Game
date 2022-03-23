@@ -1,0 +1,30 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=2]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type spatial;
+render_mode unshaded;
+
+
+
+uniform sampler2D distortion;
+
+
+
+void fragment() {
+	vec2 d = texture(distortion, UV).xy - vec2(0.5);
+	ALBEDO = texture(SCREEN_TEXTURE, SCREEN_UV + d).rgb;
+}
+"
+
+[sub_resource type="OpenSimplexNoise" id=2]
+
+[sub_resource type="NoiseTexture" id=3]
+width = 70
+height = 1
+seamless = true
+as_normalmap = true
+noise = SubResource( 2 )
+
+[resource]
+shader = SubResource( 1 )
+shader_param/distortion = SubResource( 3 )

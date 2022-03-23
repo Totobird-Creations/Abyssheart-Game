@@ -1,0 +1,20 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/spore.obj-da78d09b22603670bfedd8b8f8ecd4dc.mesh"
+
+[deps]
+
+files=[ "res://.import/spore.obj-da78d09b22603670bfedd8b8f8ecd4dc.mesh" ]
+
+source_file="res://assets/model/feature/foliage/spore.obj"
+dest_files=[ "res://.import/spore.obj-da78d09b22603670bfedd8b8f8ecd4dc.mesh", "res://.import/spore.obj-da78d09b22603670bfedd8b8f8ecd4dc.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+octahedral_compression=true
+optimize_mesh_flags=4286

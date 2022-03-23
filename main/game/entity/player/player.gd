@@ -9,9 +9,10 @@ export(float) var acceleration      : float   = 100.0
 export(float) var friction          : float   = 75.0
 export(float) var max_speed         : float   = 1.0
 export(float) var jump_strength     : float   = 25.0
+export(float) var push_strength     : float   = 1.0
 export(float) var mouse_sensitivity : float   = 0.002
 
-var               velocity          : Vector3 = Vector3.ZERO
+var velocity : Vector3 = Vector3.ZERO
 
 
 
@@ -26,8 +27,8 @@ func _exit_tree() -> void:
 
 
 func _ready() -> void:
-	$camera.current                 = controlling
-	$camera/viewer.requires_visuals = controlling
+	$pivot/camera/camera.current                 = controlling
+	$pivot/camera/camera/viewer.requires_visuals = controlling
 
 
 
@@ -46,9 +47,14 @@ func _physics_process(delta : float) -> void:
 	velocity   -= input * acceleration * delta
 	velocity.y -= gravity * delta
 
-	var next_velocity : Vector3 = move_and_slide(velocity, Vector3.UP, true)
-
-	# TODO : Push handler
+	var next_velocity : Vector3 = move_and_slide(velocity, Vector3.UP, false)
+	for i in range(get_slide_count()):
+		var collision : KinematicCollision = get_slide_collision(i)
+		if (Tool.is_player_entity(collision.collider)):
+			var entity : PlayerEntity = collision.collider
+			var push   : Vector3      = -collision.normal * push_strength
+			velocity      += entity.move_and_slide(push)
+			next_velocity += push
 
 	velocity = next_velocity
 
@@ -57,8 +63,9 @@ func _physics_process(delta : float) -> void:
 func _input(event : InputEvent) -> void:
 	if (controlling):
 		if (event is InputEventMouseMotion):
-			$camera.rotation.x  = clamp($camera.rotation.x - (event.relative.y * mouse_sensitivity), -PI / 2.0, PI / 2.0)
-			rotation.y         -= event.relative.x * mouse_sensitivity
+			$pivot/camera.rotation.x  = clamp($pivot/camera.rotation.x - (event.relative.y * mouse_sensitivity), -PI / 2.0, PI / 2.0)
+			rotation.y               -= event.relative.x * mouse_sensitivity
+			$pivot/hands.rotation.x   = $pivot/camera.rotation.x / 4.0
 		elif (event is InputEventKey and event.scancode == KEY_ESCAPE):
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 

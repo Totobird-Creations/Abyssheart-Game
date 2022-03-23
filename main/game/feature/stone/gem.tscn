@@ -11,8 +11,6 @@ script = ExtResource( 1 )
 saturation = 0.75
 alpha = 0.75
 mesh_directory = "res://assets/model/feature/stone/gem/"
-mesh_extension = ".obj"
-independent = true
 
 [node name="mesh" type="Spatial" parent="."]
 transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )

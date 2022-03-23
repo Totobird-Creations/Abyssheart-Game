@@ -5,15 +5,14 @@ extends VoxelGeneratorScript
 
 const                        channel    : int              = VoxelBuffer.CHANNEL_SDF
 
-export(OpenSimplexNoise) var height_map      : OpenSimplexNoise
-export(float)            var height_max      : float            = 512.0
-export(float)            var height_scale    : float            = 1024.0
-export(OpenSimplexNoise) var roughness_map   : OpenSimplexNoise
-export(float)            var roughness_max   : float            = 32.0
-export(float)            var roughness_scale : float            = 16.0
-export(OpenSimplexNoise) var flatness_map    : OpenSimplexNoise
-export(float)            var flatness_scale  : float            = 256.0
-export(Curve)            var flatness_curve  : Curve
+export(OpenSimplexNoise) var wall_map        : OpenSimplexNoise
+export(float)            var wall_max        : float            = 64.0
+export(float)            var wall_scale      : float            = 64.0
+export(Curve)            var wall_curve      : Curve
+export(OpenSimplexNoise) var thickness_map   : OpenSimplexNoise
+export(float)            var thickness_max   : float            = 10.0
+export(float)            var thickness_scale : float            = 256.0
+export(Curve)            var thickness_curve : Curve
 
 
 
@@ -32,12 +31,8 @@ func _generate_block(buffer : VoxelBuffer, origin : Vector3, lod : int) -> void:
 		var x : float = world.x + ix
 		for iz in range(size.z):
 			var z : float = world.z + iz
-
-			var height    : float = (height_map.get_noise_2d(x / height_scale, z / height_scale) + 1) / 2.0 * height_max
-			var roughness : float = (roughness_map.get_noise_2d(x / roughness_scale, z / roughness_scale) + 1) / 2.0 * roughness_max
-			var flatness  : float = flatness_curve.interpolate((flatness_map.get_noise_2d(x / flatness_scale, z / flatness_scale) + 1) / 2.0)
-			var terrain : float = height + (roughness * flatness)
-
 			for iy in range(size.y):
 				var y : float = world.y + iy
-				buffer.set_voxel_f(clamp(y - terrain, -1, 1), ix, iy, iz, channel)
+
+				var tunnels : float = wall_map.get_noise_3dv(Vector3(x, y, z) / wall_scale)
+				buffer.set_voxel_f(clamp(tunnels, -1, 1), ix, iy, iz, channel)

@@ -7,10 +7,12 @@ render_mode unshaded;
 
 
 uniform vec4      colour      : hint_color              = vec4(0.0, 1.0, 0.0, 0.75); // Colour that the crystal should be.
-uniform float     threshold   : hint_range(0.0, 25.0)   = 3.0;                       // WorldEnvironment node glow_threshold.
-uniform float     glow_range  : hint_range(0.001, 10.0) = 5.0;                       // Distance between the top and bottom of the glowing volume.
-uniform float     glow_offset : hint_range(-10.0, 10.0) = 0.4;                       // Position of the glowing volume.
-uniform sampler2D glow_curve  : hint_albedo;                                         // Glow curve.
+uniform float     threshold    : hint_range(0.0, 25.0)   = 3.0;                       // WorldEnvironment node glow_threshold.
+uniform float     glow_range   : hint_range(0.001, 10.0) = 5.0;                       // Distance between the top and bottom of the glowing volume.
+uniform float     glow_offset  : hint_range(-10.0, 10.0) = 0.4;                       // Position of the glowing volume.
+uniform sampler2D glow_curve   : hint_albedo;                                         // Glow curve.
+uniform float     pulse_speed  : hint_range(0.0, 3.0)    = 0.5;                       // Speed to pulse emission.
+uniform float     pulse_amount : hint_range(0.0, 3.0)    = 0.5;                       // Amount to pulse emission.
 
 varying vec3 vtx;
 
@@ -21,9 +23,10 @@ void vertex() {
 }
 
 void fragment() {
-	float height = clamp(texture(glow_curve, vec2(vtx.y / glow_range + glow_offset, 0.0)).r, 0.0, 1.0);
-	ALBEDO   = colour.rgb * (threshold * (1.0 - height));
-	EMISSION = colour.rgb * threshold;
+	float height          = clamp(texture(glow_curve, vec2(vtx.y / glow_range + glow_offset, 0.0)).r, 0.0, 1.0);
+	float timed_threshold = threshold + (sin(pulse_speed * TIME * 3.142) / 2.0 + 0.5) * pulse_amount;
+	ALBEDO   = colour.rgb * (timed_threshold * (1.0 - height));
+	EMISSION = colour.rgb * timed_threshold;
 	ALPHA    = colour.a;
 }
 
@@ -45,4 +48,6 @@ shader_param/colour = Color( 0.514587, 1, 0.25, 0.75 )
 shader_param/threshold = 3.0
 shader_param/glow_range = 5.0
 shader_param/glow_offset = 0.4
+shader_param/pulse_speed = 0.5
+shader_param/pulse_amount = 0.5
 shader_param/glow_curve = SubResource( 3 )

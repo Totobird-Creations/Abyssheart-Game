@@ -1,0 +1,15 @@
+[gd_resource type="SpatialMaterial" load_steps=3 format=2]
+
+[sub_resource type="OpenSimplexNoise" id=1]
+period = 32.0
+
+[sub_resource type="NoiseTexture" id=2]
+noise = SubResource( 1 )
+
+[resource]
+albedo_color = Color( 0.247059, 0.247059, 0.247059, 1 )
+metallic = 1.0
+metallic_texture = SubResource( 2 )
+roughness = 0.5
+transmission_enabled = true
+transmission = Color( 1, 1, 1, 1 )
