@@ -5,9 +5,10 @@ code = "shader_type canvas_item;
 
 
 
-uniform int render = 0;
-// 0 : Temperature | Humidity | Humidity
-// 1 : Mushiness   | NA       | Mushiness
+uniform int render = 2;
+// 0 : Temperature, Humidity
+// 1 : Mushiness
+// 2 : Biome
 uniform int       temperature_seed  = 0    ;
 uniform sampler2D temperature_map          ;
 uniform sampler2D temperature_curve        ;
@@ -16,6 +17,8 @@ uniform int       humidity_seed     = 1    ;
 uniform sampler2D humidity_map             ;
 uniform sampler2D humidity_curve           ;
 uniform float     humidity_scale    = 25.0 ;
+uniform int       rockiness_seed    = 2    ;
+uniform float     rockiness_scale   = 25.0 ;
 
 
 
@@ -59,22 +62,64 @@ void fragment() {
 		COLOR = vec4(0.0);
 		return;
 	}
-	float temperature_noise = texture(temperature_map, vec2(noise(UV * temperature_scale, temperature_seed), 0.0)).r;
-	float temperature_value = texture(temperature_curve, vec2(dist, 0.0)).r;
-	float temperature       = interpolate(temperature_noise, interpolate(0.5, 1.0, temperature_value), abs(temperature_value * 2.0 - 1.0));
-	float humidity_noise    = texture(humidity_map, vec2(noise(UV * humidity_scale, humidity_seed), 0.0)).r;
-	float humidity_value    = texture(humidity_curve, vec2(dist, 0.0)).r;
-	float humidity          = interpolate(humidity_noise, interpolate(0.0, 1.0, humidity_value), abs(humidity_value * 2.0 - 1.0));
-	vec3 colour             = vec3(0.0);
+
+	float temperature_noise     = texture(temperature_map, vec2(noise(UV * temperature_scale, temperature_seed), 0.0)).r;
+	float temperature_value     = texture(temperature_curve, vec2(dist, 0.0)).r;
+	float temperature           = interpolate(temperature_noise, interpolate(0.25, 1.0, temperature_value), abs(temperature_value * 2.0 - 1.0));
+	float humidity_noise        = texture(humidity_map, vec2(noise(UV * humidity_scale, humidity_seed), 0.0)).r;
+	float humidity_value        = texture(humidity_curve, vec2(dist, 0.0)).r;
+	float humidity              = interpolate(humidity_noise, interpolate(0.0, 1.0, humidity_value), abs(humidity_value * 2.0 - 1.0));
+	float mushiness_temperature = pow(1.0 - abs(temperature - 0.25), 5.0);
+	float mushiness_humidity    = pow(1.0 - abs(humidity - 1.0), 3.0);
+	float mushiness             = pow((mushiness_temperature + mushiness_humidity) / 2.0, 1.0);
+	float rockiness             = noise(UV * rockiness_scale, rockiness_seed);
+	
+	temperature = clamp(temperature, 0.0, 1.0);
+	humidity    = clamp(humidity, 0.0, 1.0);
+	mushiness   = clamp(mushiness, 0.0, 1.0);
+	vec3 colour = vec3(0.0);
+
 	if (render == 0) {
-		temperature = clamp(temperature, 0.0, 1.0);
-		humidity    = clamp(humidity, 0.0, 1.0);
-		colour      = vec3(temperature, humidity, humidity);
+		colour = vec3(temperature, humidity, humidity);
 	}
+
 	else if (render == 1) {
-		float mushiness = humidity;
 		colour = vec3(mushiness, 0.0, mushiness);
 	}
+
+	else if (render == 2) {
+		if (mushiness >= 0.5) { // Mushy
+			colour = vec3(0.75, 0.25, 1.0);
+		}
+		else if (temperature <= 0.01 && humidity >= 0.25) { // Frozen
+			colour = vec3(0.0, 1.0, 1.0);
+		}
+		else if (temperature >= 0.5 && humidity <= 0.15) { // Molten
+			colour = vec3(1.0, 0.0, 0.0);
+		}
+		else if (temperature >= 0.25 && temperature <= 0.75 && humidity >= 0.25) { // Lush
+			colour = vec3(0.25, 0.75, 0.25);
+		}
+		else if (temperature <= 0.01 && humidity >= 0.1 && humidity <= 0.25) { // Webbed
+			colour = vec3(1.0, 1.0, 1.0);
+		}
+		else if (mushiness >= 0.4 && rockiness <= 0.5) { // Limestone
+			colour = vec3(0.9, 1.0, 0.25);
+		}
+		else if (mushiness >= 0.4 && rockiness <= 0.5) { // Limestone
+			colour = vec3(0.9, 1.0, 0.25);
+		}
+		else if (mushiness >= 0.4 && rockiness > 0.5) { // Rocky
+			colour = vec3(0.25, 0.25, 0.25);
+		}
+		else if (temperature >= 0.25 && temperature <= 0.75 && humidity >= 0.1) { // Muddy
+			colour = vec3(0.5, 0.25, 0.0);
+		}
+		else if (temperature <= 0.05 && humidity <= 0.2) { // Crystal
+			colour = vec3(0.0, 0.0, 1.0);
+		}
+	}
+
 	COLOR = vec4(colour, 1.0);
 }
 "
@@ -92,7 +137,7 @@ _data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 1, 1 ), 0.0, 0.0, 0, 0 ]
 curve = SubResource( 8 )
 
 [sub_resource type="Curve" id=2]
-_data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 0.0350877, 0 ), 0.0, 0.0, 0, 0, Vector2( 0.0899123, 0.5 ), 0.0, 0.0, 0, 0, Vector2( 0.657895, 0.5 ), 0.0, 0.0, 0, 0, Vector2( 0.881579, 0.860227 ), 4.58961, 4.58961, 0, 0, Vector2( 0.967105, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 1 ), 0.0, 0.0, 0, 0 ]
+_data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 0.0350877, 0 ), 0.0, 0.0, 0, 0, Vector2( 0.0899123, 0.5 ), 0.0, 0.0, 0, 0, Vector2( 0.789091, 0.5 ), 0.0, 0.0, 0, 0, Vector2( 0.927273, 0.836364 ), 4.58961, 4.58961, 0, 0, Vector2( 0.967105, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 1 ), 0.0, 0.0, 0, 0 ]
 
 [sub_resource type="CurveTexture" id=3]
 curve = SubResource( 2 )
@@ -105,11 +150,13 @@ curve = SubResource( 4 )
 
 [resource]
 shader = SubResource( 1 )
-shader_param/render = 0
+shader_param/render = 2
 shader_param/temperature_seed = 0
 shader_param/temperature_scale = 25.0
 shader_param/humidity_seed = 1
 shader_param/humidity_scale = 25.0
+shader_param/rockiness_seed = 2
+shader_param/rockiness_scale = 25.0
 shader_param/temperature_map = SubResource( 5 )
 shader_param/temperature_curve = SubResource( 3 )
 shader_param/humidity_map = SubResource( 9 )
