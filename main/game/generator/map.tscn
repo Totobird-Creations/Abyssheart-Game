@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://main/game/generator/map.gd" type="Script" id=1]
+[ext_resource path="res://assets/shader/map.tres" type="Material" id=2]
+
+[node name="map" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="bounds" type="Control" parent="."]
+margin_right = 600.0
+margin_bottom = 600.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="texture" type="ColorRect" parent="bounds"]
+material = ExtResource( 2 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="item_rect_changed" from="." to="." method="update_rect"]
