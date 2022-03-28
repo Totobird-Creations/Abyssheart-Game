@@ -3,29 +3,29 @@ class_name PlayerEntity
 
 
 
-export(bool)  var controlling       : bool  = false
-export(float) var mouse_sensitivity : float = 0.002
+export(bool)  var controlling           : bool  = false
+export(float) var mouse_sensitivity     : float = 0.002
 
-export(float) var max_floor_angle   : float = 0.8028515
-export(float) var gravity           : float = 40.0
-export(float) var jump_strength     : float = 10.0
-export(float) var walk_speed        : float = 10.0
-export(float) var sprint_speed      : float = 16.0
-export(float) var acceleration      : float = 8.0
-export(float) var deceleration      : float = 10.0
-export(float) var air_control       : float = 0.5
+export(float) var max_floor_angle       : float = 0.8028515
+export(float) var gravity               : float = 40.0
+export(float) var jump_strength         : float = 10.0
+export(float) var walk_speed            : float = 10.0
+export(float) var sprint_speed          : float = 16.0
+export(float) var acceleration          : float = 8.0
+export(float) var deceleration          : float = 10.0
+export(float) var air_control           : float = 0.5
 
-export(float) var max_health        : float = 100.0
-export(float) var damage_threshold  : float = 30.0
-export(float) var damage_power      : float = 2.0
-export(float) var damage_scale      : float = 10.0
+export(float) var max_health            : float = 100.0
+export(float) var fall_damage_threshold : float = 25.0
+export(float) var fall_damage_power     : float = 2.0
+export(float) var fall_damage_scale     : float = 10.0
 
-export(float) var max_stamina       : float = 100.0
-export(float) var stamina_cooldown  : float = 1.0
-export(float) var stamina_regen     : float = 10.0
-export(float) var sprint_stamina    : float = 10.0
-export(float) var jump_stamina      : float = 15.0
-export(float) var exhaust_modifier  : float = 0.375
+export(float) var max_stamina           : float = 100.0
+export(float) var stamina_cooldown      : float = 1.0
+export(float) var stamina_regen         : float = 10.0
+export(float) var sprint_stamina        : float = 10.0
+export(float) var jump_stamina          : float = 15.0
+export(float) var exhaust_modifier      : float = 0.375
 
 var health          : float   = max_health   setget set_health
 var stamina         : float   = max_stamina  setget set_stamina
@@ -34,8 +34,6 @@ var stamina_exhaust : bool    = false
 
 var velocity        : Vector3 = Vector3.ZERO
 var snap            : Vector3 = Vector3.ZERO
-var prev_velocity   : Vector3 = Vector3.ZERO
-var prev_on_ground  : bool    = false
 
 
 
@@ -81,6 +79,11 @@ func _physics_process(delta : float) -> void:
 	direction.y = 0.0
 	direction = direction.normalized()
 
+	# Previous Values
+	var prev_velocity  : Vector3 = velocity
+	var prev_on_ground : bool    = is_on_floor() || is_on_wall()
+
+	# Snapping
 	if (is_on_floor()):
 		snap = -get_floor_normal() - get_floor_velocity() * delta
 		velocity.y = max(velocity.y, 0)
@@ -127,18 +130,16 @@ func _physics_process(delta : float) -> void:
 	velocity = move_and_slide_with_snap(velocity, snap, Vector3.UP, true, 4, max_floor_angle)
 
 	# Fall Damage
-	var on_ground : bool = is_on_floor() || is_on_wall() || is_on_ceiling()
-	if (on_ground && ! prev_on_ground):
-		if (-prev_velocity.y >= damage_threshold):
-			self.health -= pow(damage_power, (-prev_velocity.y - damage_threshold)) * damage_scale
-	prev_on_ground = on_ground
+	var on_ground : bool = is_on_floor() || is_on_wall()
+	if (on_ground && (! prev_on_ground) && -prev_velocity.y - velocity.y >= fall_damage_threshold):
+		var damage : float = -prev_velocity.y - velocity.y - fall_damage_threshold
+		damage = pow(damage, fall_damage_power) * fall_damage_scale
+		self.health -= damage
 
 	# Stamina Regeneration
 	if (stamina_timer <= 0):
 		self.stamina += stamina_regen * delta
 	stamina_timer = clamp(stamina_timer - delta, 0.0, stamina_cooldown)
-
-	prev_velocity = velocity
 
 
 
