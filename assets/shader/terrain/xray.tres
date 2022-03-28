@@ -1,0 +1,13 @@
+[gd_resource type="Shader" format=2]
+
+[resource]
+code = "shader_type spatial;
+render_mode unshaded;
+
+
+
+void fragment() {
+	ALBEDO = vec3(1.0);
+	ALPHA  = 0.25;
+}
+"

@@ -12,6 +12,8 @@ radius = 0.5
 height = 1.5
 
 [node name="player" type="KinematicBody"]
+collision_layer = 4
+collision_mask = 3
 script = ExtResource( 2 )
 
 [node name="mesh_pivot" type="Spatial" parent="."]
@@ -25,6 +27,7 @@ material/0 = null
 
 [node name="body" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+visible = false
 shape = SubResource( 2 )
 
 [node name="pivot" type="Spatial" parent="."]
@@ -32,10 +35,10 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0 )
 
 [node name="camera" type="Spatial" parent="pivot"]
 
+[node name="viewer" type="VoxelViewer" parent="pivot/camera"]
+
 [node name="camera" type="Camera" parent="pivot/camera"]
 far = 1000.0
-
-[node name="viewer" type="VoxelViewer" parent="pivot/camera/camera"]
 
 [node name="hands" type="Spatial" parent="pivot"]
 

@@ -1,3 +1,206 @@
-[gd_scene format=2]
+[gd_scene load_steps=17 format=2]
+
+[ext_resource path="res://main/game/generator/generator.tres" type="VoxelGeneratorScript" id=1]
+[ext_resource path="res://main/game/entity/player/player.tscn" type="PackedScene" id=2]
+[ext_resource path="res://assets/shader/terrain/normal.tres" type="Shader" id=3]
+[ext_resource path="res://main/game/terroir.gd" type="Script" id=4]
+[ext_resource path="res://main/game/world.gd" type="Script" id=5]
+[ext_resource path="res://main/game/canvas.gd" type="Script" id=6]
+
+[sub_resource type="VoxelMesherTransvoxel" id=3]
+
+[sub_resource type="ShaderMaterial" id=7]
+shader = ExtResource( 3 )
+
+[sub_resource type="ProceduralSky" id=5]
+
+[sub_resource type="Environment" id=4]
+background_mode = 1
+background_sky = SubResource( 5 )
+background_energy = 0.0
+ambient_light_color = Color( 1, 1, 1, 1 )
+ambient_light_energy = 0.0
+fog_enabled = true
+fog_color = Color( 0, 0, 0, 1 )
+fog_sun_color = Color( 0, 0, 0, 1 )
+glow_enabled = true
+glow_levels/1 = true
+glow_blend_mode = 0
+glow_hdr_threshold = 3.0
+glow_bicubic_upscale = true
+glow_high_quality = true
+
+[sub_resource type="Gradient" id=20]
+offsets = PoolRealArray( 0, 0.5, 1 )
+colors = PoolColorArray( 1, 0.247059, 0.247059, 1, 0.74902, 0, 0, 1, 1, 0.247059, 0.247059, 1 )
+
+[sub_resource type="GradientTexture" id=21]
+gradient = SubResource( 20 )
+
+[sub_resource type="Animation" id=30]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("background/container/bar:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Color( 1, 0.74902, 0, 1 ) ]
+}
+
+[sub_resource type="Animation" id=26]
+resource_name = "toggle"
+length = 0.25
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("background/container/bar:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.25 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 0.74902, 0, 1 ), Color( 1, 0, 0, 1 ) ]
+}
+
+[sub_resource type="Animation" id=28]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 0.498039 ) ]
+}
+
+[sub_resource type="Animation" id=29]
+resource_name = "main"
+length = 0.9
+step = 0.025
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.125, 0.175, 0.3, 0.425, 0.475, 0.6, 0.725, 0.775, 0.9 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 0.498039 ), Color( 1, 0, 0, 0.74902 ), Color( 1, 0, 0, 0.74902 ), Color( 0, 0, 0, 0.498039 ), Color( 1, 0, 0, 0.74902 ), Color( 1, 0, 0, 0.74902 ), Color( 0, 0, 0, 0.498039 ), Color( 1, 0, 0, 0.74902 ), Color( 1, 0, 0, 0.74902 ), Color( 0, 0, 0, 0.498039 ) ]
+}
 
 [node name="world" type="Spatial"]
+script = ExtResource( 5 )
+
+[node name="terroir" type="Spatial" parent="."]
+script = ExtResource( 4 )
+generator = ExtResource( 1 )
+
+[node name="terrain" type="VoxelTerrain" parent="terroir"]
+generator = ExtResource( 1 )
+mesher = SubResource( 3 )
+max_view_distance = 64
+collision_mask = 0
+run_stream_in_editor = false
+material/0 = SubResource( 7 )
+
+[node name="chunks" type="Spatial" parent="terroir"]
+
+[node name="entities" type="Spatial" parent="."]
+
+[node name="player" parent="entities" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.8006, 0 )
+controlling = true
+
+[node name="environment" type="WorldEnvironment" parent="."]
+environment = SubResource( 4 )
+
+[node name="canvas" type="CanvasLayer" parent="."]
+script = ExtResource( 6 )
+
+[node name="ui" type="Control" parent="canvas"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="bars" type="HBoxContainer" parent="canvas/ui"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = -296.0
+margin_right = 32.0
+margin_bottom = -8.0
+custom_constants/separation = 4
+
+[node name="health" type="ColorRect" parent="canvas/ui/bars"]
+margin_right = 24.0
+margin_bottom = 288.0
+size_flags_horizontal = 3
+color = Color( 0, 0, 0, 0.498039 )
+
+[node name="container" type="Control" parent="canvas/ui/bars/health"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 4.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="bar" type="TextureRect" parent="canvas/ui/bars/health/container"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = SubResource( 21 )
+expand = true
+
+[node name="stamina" type="Control" parent="canvas/ui"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -128.0
+margin_top = -44.0
+margin_right = 128.0
+margin_bottom = -24.0
+size_flags_horizontal = 3
+
+[node name="background" type="ColorRect" parent="canvas/ui/stamina"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+color = Color( 0, 0, 0, 0.498039 )
+
+[node name="container" type="Control" parent="canvas/ui/stamina/background"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 4.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="bar" type="ColorRect" parent="canvas/ui/stamina/background/container"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 1, 0.74902, 0, 1 )
+
+[node name="colour" type="AnimationPlayer" parent="canvas/ui/stamina/background/container/bar"]
+root_node = NodePath("../../../..")
+anims/RESET = SubResource( 30 )
+anims/toggle = SubResource( 26 )
+
+[node name="warning" type="AnimationPlayer" parent="canvas/ui/stamina/background"]
+anims/RESET = SubResource( 28 )
+anims/main = SubResource( 29 )
+
+[connection signal="block_loaded" from="terroir/terrain" to="terroir" method="chunk_loaded"]
+[connection signal="block_unloaded" from="terroir/terrain" to="terroir" method="chunk_unloaded"]
