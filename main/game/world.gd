@@ -4,7 +4,7 @@ extends Spatial
 
 enum RenderMode {
 	Normal
-	XRay
+	Debug
 }
 var render_mode : int = RenderMode.Normal
 
@@ -19,8 +19,8 @@ func _process(_delta : float) -> void:
 		if (render_mode >= 2):
 			render_mode = 0
 		match (render_mode):
-			RenderMode.XRay:
-				shader        = preload('res://assets/shader/terrain/xray.tres')
+			RenderMode.Debug:
+				shader        = preload('res://assets/shader/terrain/debug.tres')
 				ambient_light = 0.1
 
 		$terroir/terrain.get_material(0).shader       = shader

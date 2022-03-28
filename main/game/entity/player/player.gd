@@ -39,10 +39,12 @@ var snap            : Vector3 = Vector3.ZERO
 
 
 func _enter_tree() -> void:
+	# Capture mouse on entity initialisation if controlling.
 	if (controlling):
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _exit_tree() -> void:
+	# Release mouse on entity destruction if controlling.
 	if (controlling):
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
@@ -127,6 +129,7 @@ func _physics_process(delta : float) -> void:
 		if (abs(velocity.z) < velocity_clamp):
 			velocity.z = 0
 
+	# Move character
 	velocity = move_and_slide_with_snap(velocity, snap, Vector3.UP, true, 4, max_floor_angle)
 
 	# Fall Damage
@@ -145,14 +148,17 @@ func _physics_process(delta : float) -> void:
 
 func _input(event : InputEvent) -> void:
 	if (controlling):
+		# Rotate camera on mouse motion if controlling.
 		if (event is InputEventMouseMotion):
 			$pivot/camera.rotation.x  = clamp($pivot/camera.rotation.x - (event.relative.y * mouse_sensitivity), -PI / 2.0, PI / 2.0)
 			rotation.y               -= event.relative.x * mouse_sensitivity
 			$pivot/hands.rotation.x   = $pivot/camera.rotation.x / 4.0
+		# Release mouse on escape pressed if controlling.
 		elif (event is InputEventKey and event.scancode == KEY_ESCAPE):
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func _notification(what : int) -> void:
+	# Capture mouse on mouse enter window if controlling.
 	if (controlling):
 		if (what == NOTIFICATION_WM_MOUSE_ENTER):
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -161,7 +167,9 @@ func _notification(what : int) -> void:
 
 func set_health(value : float) -> void:
 	health = clamp(value, 0.0, max_health)
-	get_node('../../canvas').health_target = health / max_health
+	# Send value to canvas if controlling.
+	if (controlling):
+		get_node('../../canvas').health_target = health / max_health
 
 func set_stamina(value : float) -> void:
 	if (value < stamina):
@@ -171,8 +179,10 @@ func set_stamina(value : float) -> void:
 		stamina_exhaust = true
 	elif (stamina_exhaust && stamina >= max_stamina):
 		stamina_exhaust = false
-	get_node('../../canvas').stamina_target  = stamina / max_stamina
-	get_node('../../canvas').stamina_exhaust = stamina_exhaust
+	# Send value to canvas if controlling.
+	if (controlling):
+		get_node('../../canvas').stamina_target  = stamina / max_stamina
+		get_node('../../canvas').stamina_exhaust = stamina_exhaust
 
 func has_stamina(_amount : float = 0.0) -> bool:
 	return (! stamina_exhaust)# && stamina > amount

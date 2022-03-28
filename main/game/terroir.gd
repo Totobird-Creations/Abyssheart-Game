@@ -5,7 +5,7 @@ extends Spatial
 const CHUNK : PackedScene = preload('res://main/game/chunk.tscn')
 
 export(VoxelGenerator) var generator               : VoxelGenerator
-export(int, 1, 10)     var feature_placement_tries : int            = 10
+export(int, 1, 100)    var feature_placement_tries : int            = 25
 
 var chunks : Dictionary = {}
 
@@ -35,7 +35,8 @@ func chunk_loaded(chunk_position : Vector3) -> void:
 	var name       : String  = str(chunk_position.x) + "_" + str(chunk_position.z)
 	# Make sure chunk is not loaded.
 	if (not $chunks.get_node_or_null(name)):
-	
+
+		# Generate chunk.
 		var chunk : Chunk    = CHUNK.instance()
 		chunk.name           = name
 		chunk.chunk_position = Vector2(chunk_position.x, chunk_position.z)

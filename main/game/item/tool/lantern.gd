@@ -21,6 +21,7 @@ func _ready() -> void:
 
 func _physics_process(delta : float) -> void:
 	time += delta
+	# Randomly interpolate brightness (Flickering).
 	update_colour(colour * (noise.get_noise_1d(time) / 2.0 + 1.5))
 
 func update_colour(col : Color) -> void:

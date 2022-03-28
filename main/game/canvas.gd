@@ -12,11 +12,13 @@ var prev_stamina_exhaust : bool  = false
 
 
 func _physics_process(delta : float) -> void:
+	# Interpolate health bar to correct value
 	var prev_health : float = 1.0 - $ui/bars/health/container/bar.anchor_top
 	$ui/bars/health/container/bar.anchor_top = 1.0 - move_toward(prev_health, health_target,
 		abs(stamina_target - prev_health) * 25.0 * delta
 	)
 
+	# Interpolate stamina bar to correct value
 	var prev_stamina : float = $ui/stamina/background/container/bar.anchor_right
 	$ui/stamina/background/container/bar.anchor_right = move_toward(prev_stamina, stamina_target,
 		abs(stamina_target - prev_stamina) * 25.0 * delta

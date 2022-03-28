@@ -29,13 +29,17 @@ func _get_used_channels_mask() -> int:
 
 
 func _generate_block(buffer : VoxelBuffer, origin : Vector3, lod : int) -> void:
+	# Set correct seeds.
 	tunnel_map.seed    = world_seed
 	height_map.seed    = world_seed + 1
 	elevation_map.seed = world_seed + 2
 	roughness_map.seed = world_seed + 3
 
+	# Make sure lod is deactivated.
 	if (lod != 0):
 		return
+
+	# Generate terrain.
 	var size  : Vector3 = buffer.get_size()
 	var world : Vector3 = origin
 
