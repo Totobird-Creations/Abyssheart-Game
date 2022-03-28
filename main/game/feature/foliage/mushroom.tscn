@@ -6,7 +6,7 @@
 [ext_resource path="res://assets/shader/feature/foliage/mushroom_spore_stem.tres" type="Material" id=4]
 
 [sub_resource type="CylinderShape" id=1]
-height = 4.0
+height = 6.5
 
 [sub_resource type="CylinderShape" id=2]
 radius = 3.0
@@ -20,10 +20,11 @@ collision_layer = 2
 collision_mask = 0
 script = ExtResource( 2 )
 required_height = 5.0
+required_redius = 3.0
 normal_amount = 0.5
 
 [node name="mesh" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.75, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0 )
 mesh = ExtResource( 1 )
 material/0 = ExtResource( 3 )
 material/1 = ExtResource( 4 )
@@ -33,9 +34,11 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0 )
 shape = SubResource( 1 )
 
 [node name="shape_cap" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.25, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 0 )
+visible = false
 shape = SubResource( 2 )
 
 [node name="shape_bulb" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.15, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.4, 0 )
+visible = false
 shape = SubResource( 7 )

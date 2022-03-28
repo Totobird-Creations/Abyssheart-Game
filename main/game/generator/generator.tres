@@ -3,15 +3,12 @@
 [ext_resource path="res://main/game/generator/generator.gd" type="Script" id=1]
 
 [sub_resource type="OpenSimplexNoise" id=4]
-seed = 2
 period = 1.0
 
 [sub_resource type="OpenSimplexNoise" id=3]
-seed = 1
 period = 1.0
 
 [sub_resource type="OpenSimplexNoise" id=5]
-seed = 3
 period = 1.0
 
 [sub_resource type="Curve" id=2]
@@ -22,6 +19,7 @@ period = 1.0
 
 [resource]
 script = ExtResource( 1 )
+world_seed = 0
 tunnel_map = SubResource( 1 )
 tunnel_scale = 64.0
 tunnel_curve = SubResource( 2 )

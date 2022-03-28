@@ -5,6 +5,7 @@ class_name Feature
 
 export(int)   var feature_seed    : int   = 0
 export(float) var required_height : float = 3.0
+export(float) var required_radius : float = 1.0
 export(float) var normal_amount   : float = 1.0
 
 var placed     : bool    = false
@@ -30,7 +31,7 @@ func _ready() -> void:
 
 
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if (not placed):
 		if (floor_cast.is_colliding()):
 			translation.y      = floor_cast.get_collision_point().y - 0.1

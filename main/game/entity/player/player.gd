@@ -130,11 +130,11 @@ func _physics_process(delta : float) -> void:
 	velocity = move_and_slide_with_snap(velocity, snap, Vector3.UP, true, 4, max_floor_angle)
 
 	# Fall Damage
-	var on_ground : bool = is_on_floor() || is_on_wall()
-	if (on_ground && (! prev_on_ground) && -prev_velocity.y - velocity.y >= fall_damage_threshold):
-		var damage : float = -prev_velocity.y - velocity.y - fall_damage_threshold
-		damage = pow(damage, fall_damage_power) * fall_damage_scale
-		self.health -= damage
+	#var on_ground : bool = is_on_floor() || is_on_wall()
+	#if (on_ground && (! prev_on_ground) && -prev_velocity.y - velocity.y >= fall_damage_threshold):
+	#	var damage : float = -prev_velocity.y - velocity.y - fall_damage_threshold
+	#	damage = pow(damage, fall_damage_power) * fall_damage_scale
+	#	self.health -= damage
 
 	# Stamina Regeneration
 	if (stamina_timer <= 0):
@@ -174,5 +174,5 @@ func set_stamina(value : float) -> void:
 	get_node('../../canvas').stamina_target  = stamina / max_stamina
 	get_node('../../canvas').stamina_exhaust = stamina_exhaust
 
-func has_stamina(amount : float = 0.0) -> bool:
+func has_stamina(_amount : float = 0.0) -> bool:
 	return (! stamina_exhaust)# && stamina > amount

@@ -6,6 +6,7 @@ class_name Generator
 
 const channel : int = VoxelBuffer.CHANNEL_SDF
 
+export(int)              var world_seed      : int              = 0
 export(OpenSimplexNoise) var tunnel_map      : OpenSimplexNoise # Passages
 export(float)            var tunnel_scale    : float            = 64.0
 export(Curve)            var tunnel_curve    : Curve
@@ -28,6 +29,11 @@ func _get_used_channels_mask() -> int:
 
 
 func _generate_block(buffer : VoxelBuffer, origin : Vector3, lod : int) -> void:
+	tunnel_map.seed    = world_seed
+	height_map.seed    = world_seed + 1
+	elevation_map.seed = world_seed + 2
+	roughness_map.seed = world_seed + 3
+
 	if (lod != 0):
 		return
 	var size  : Vector3 = buffer.get_size()
