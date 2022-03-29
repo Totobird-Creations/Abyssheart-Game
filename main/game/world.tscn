@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://main/game/generator/generator.tres" type="VoxelGeneratorScript" id=1]
 [ext_resource path="res://main/game/entity/player/player.tscn" type="PackedScene" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://main/game/terroir.gd" type="Script" id=4]
 [ext_resource path="res://main/game/world.gd" type="Script" id=5]
 [ext_resource path="res://main/game/canvas.gd" type="Script" id=6]
+[ext_resource path="res://main/game/Node.gdns" type="Script" id=7]
 
 [sub_resource type="VoxelMesherTransvoxel" id=3]
 
@@ -200,6 +201,9 @@ anims/toggle = SubResource( 26 )
 [node name="warning" type="AnimationPlayer" parent="canvas/ui/stamina/background"]
 anims/RESET = SubResource( 28 )
 anims/main = SubResource( 29 )
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource( 7 )
 
 [connection signal="block_loaded" from="terroir/terrain" to="terroir" method="chunk_loaded"]
 [connection signal="block_unloaded" from="terroir/terrain" to="terroir" method="chunk_unloaded"]
