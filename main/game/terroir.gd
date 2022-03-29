@@ -91,27 +91,59 @@ func get_features_in_chunk(chunk_position : Vector2, chunk_size : float, check_n
 		)
 		# Pick a random feature.
 		var feature : Feature = Feature.values()[rng.randi_range(0, len(Feature) - 1)].instance()
-		var success : bool    = true
-
-		if (success):
-			# Check if the ceiling is high enough for this feature.
-			success = check_height_allowed(feature, feature_coordinate)
-
-		if (success):
-			# Check if the feature is far enough from all nearby features.
-			var all_features : Dictionary = Tool.merge_dictionary(features, other_features)
-			for other_position in all_features.keys():
-				var other_feature : Feature = all_features[other_position]
-				if (other_position.distance_to(feature_position) <= max(other_feature.required_radius, feature.required_radius)):
-					success = false
+		var success : bool    = check_spawn_allowed(
+			feature,
+			feature_coordinate,
+			feature_position,
+			Tool.merge_dictionary(features, other_features)
+		)
 
 		if (success):
 			features[feature_position] = feature
+
+			# Add random clones of the feature around based on spread value.
+			for _i in range(rng.randi_range(0, feature.spread_count)):
+				var angle             : float   = rng.randf_range(-PI, PI)
+				var spread_coordinate : Vector2 = feature_coordinate + Vector2(cos(angle), sin(angle)) * rng.randf_range(0.0, feature.spread_range)
+				var spread_position   : Vector3 = Vector3(
+					spread_coordinate.x,
+					generator.get_elevation(spread_coordinate),
+					spread_coordinate.y
+				)
+				var spread_feature    : Feature = feature.duplicate()
+				var spread_success    : bool    = check_spawn_allowed(
+					spread_feature,
+					spread_coordinate,
+					spread_position,
+					Tool.merge_dictionary(features, other_features)
+				)
+				if (spread_success):
+					features[spread_position] = spread_feature
+				else:
+					spread_feature.free()
+
 		else:
-			feature.queue_free()
+			feature.free()
 		tries_remaining -= 1
 	return features
 
+
+
+func check_spawn_allowed(feature : Feature, feature_coordinate : Vector2, feature_position : Vector3, all_features : Dictionary) -> bool:
+	var success : bool = true
+
+	if (success):
+		# Check if the ceiling is high enough for this feature.
+		success = check_height_allowed(feature, feature_coordinate)
+
+	if (success):
+		# Check if the feature is far enough from all nearby features.
+		for other_position in all_features.keys():
+			var other_feature : Feature = all_features[other_position]
+			if (other_position.distance_to(feature_position) <= max(other_feature.required_radius, feature.required_radius)):
+				success = false
+
+	return success
 
 
 func check_height_allowed(feature : Feature, position : Vector2) -> bool:

@@ -7,6 +7,8 @@ export(int)   var feature_seed    : int   = 0
 export(float) var required_height : float = 3.0
 export(float) var required_radius : float = 1.0
 export(float) var normal_amount   : float = 1.0
+export(float) var spread_range    : float = 0.0
+export(int)   var spread_count    : float = 0
 
 var placed     : bool    = false
 var floor_cast : RayCast = RayCast.new()
