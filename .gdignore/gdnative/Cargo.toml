@@ -1,0 +1,11 @@
+[package]
+name    = "gdnative"
+version = "0.1.0"
+authors = ["Totobird Creations"]
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+gdnative = "0.9"
