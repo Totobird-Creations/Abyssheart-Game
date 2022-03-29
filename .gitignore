@@ -1,3 +1,4 @@
 .gdignore/gdnative/target/
 .gdignore/gdnative/Cargo.lock
 .import/
+**/*.import
