@@ -44,8 +44,10 @@ _global_script_class_icons={
 
 [application]
 
-config/name="Voxel Game Test"
+config/name="Abyssheart"
 run/main_scene="res://main/game/world.tscn"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="totobird_creations.abyssheart"
 config/icon="res://icon.png"
 
 [autoload]

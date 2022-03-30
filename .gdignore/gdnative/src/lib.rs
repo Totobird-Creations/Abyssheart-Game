@@ -3,13 +3,13 @@
 
 use gdnative::prelude::*;
 
-mod generator;
 mod tool;
+mod generator;
 
 
 
 fn init(handle : InitHandle) -> () {
-    generator::init(handle);
+    handle.add_class::<generator::FeatureGenerator>();
 }
 
 
