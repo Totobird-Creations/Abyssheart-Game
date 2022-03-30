@@ -121,7 +121,7 @@ material/0 = SubResource( 7 )
 
 [node name="player" parent="entities" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.8006, 0 )
-controlling = true
+controlling/active = true
 
 [node name="environment" type="WorldEnvironment" parent="."]
 environment = SubResource( 4 )

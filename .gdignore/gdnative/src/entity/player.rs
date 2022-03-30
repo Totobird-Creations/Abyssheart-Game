@@ -1,13 +1,15 @@
 use gdnative::prelude::*;
-use gdnative::api::Camera;
+use gdnative::api::{
+    Camera,
+    InputEventMouseMotion
+};
 
 use crate::tool::*;
 
 
 
-#[derive(NativeClass)]
+#[derive(NativeClass, Default)]
 #[inherit(KinematicBody)]
-#[no_constructor]
 pub struct PlayerEntity {
 
 // Controlling
@@ -96,6 +98,11 @@ pub struct PlayerEntity {
     snap            : Vector3
 
 }
+impl PlayerEntity {
+    fn new(_owner : &KinematicBody) -> Self {
+        return Self::default();
+    }
+}
 
 
 
@@ -141,7 +148,9 @@ impl PlayerEntity {
         if (input_axis.y >= 0.5)  {direction += aim.elements[0];}
         if (input_axis.y <= -0.5) {direction -= aim.elements[0];}
         direction.y = 0.0;
-        direction   = direction.normalized();
+        if (direction.length() > 0.0) {
+            direction = direction.normalized();
+        }
 
         // Snapping
         if (owner.is_on_floor()) {
@@ -160,8 +169,8 @@ impl PlayerEntity {
             if (self.snap != Vector3::ZERO && self.velocity.y != 0.0) {
                 self.velocity.y = 0.0;
             }
-            self.snap        = Vector3::ZERO;
-            self.velocity.y -= self.gravity * delta;
+            self.snap      = Vector3::ZERO;
+            self.velocity += Vector3::DOWN * self.gravity * delta;
         }
 
         // Walk / Sprint
@@ -172,8 +181,7 @@ impl PlayerEntity {
         }
 
         // Acceleration
-        let mut temp_velocity     = self.velocity;
-        temp_velocity.y           = 0.0;
+        let mut temp_velocity     = self.velocity.clone();
         let     target            = direction * speed;
         let mut temp_acceleration = if (direction.dot(temp_velocity) > 0.0) {self.acceleration} else {self.deceleration};
         if (! owner.is_on_floor()) {
@@ -202,15 +210,26 @@ impl PlayerEntity {
 
 
     #[export]
-    fn _input(&mut self, owner : &KinematicBody, event : InputEvent) -> () {
+    fn _input(&mut self, owner : &KinematicBody, event : Variant) -> () {
         if (self.controlling) {
-            godot_print!("{:?}", event);
+            if (let Some(event) = event.to_object::<InputEventMouseMotion>()) {
+                if (let Some(node) = owner.get_node_tref::<Spatial>("pivot/camera")) {
+                    unsafe {
+                        node.set_rotation(Vector3::new(
+                            node.rotation().x - (event.assume_safe().relative().y * self.mouse_sensitivity).clamp(-3.1415 / 2.0, 3.1415 / 2.0),
+                        0.0, 0.0));
+                        owner.set_rotation(owner.rotation() - Vector3::new(0.0,
+                            event.assume_safe().relative().x * self.mouse_sensitivity,
+                        0.0));
+                    }
+                }
+            }
         }
     }
 
 
 
-    fn add_stamina(&mut self, owner : &KinematicBody, amount : f32) -> () {
+    fn add_stamina(&mut self, _owner : &KinematicBody, amount : f32) -> () {
         let new_stamina = (self.stamina + amount).clamp(0.0, self.max_stamina);
         if (new_stamina < self.stamina) {
             self.stamina_timer = self.stamina_cooldown;

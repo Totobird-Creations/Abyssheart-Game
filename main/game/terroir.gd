@@ -22,6 +22,7 @@ func _ready() -> void:
 
 
 func chunk_loaded(chunk_position : Vector3) -> void:
+	return
 	var key : Vector2 = Vector2(chunk_position.x, chunk_position.z)
 	# Add chunk to list of loaded chunks.
 	if (not chunks.has(key)):
