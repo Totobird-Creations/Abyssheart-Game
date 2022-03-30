@@ -1,0 +1,8 @@
+[gd_resource type="NativeScript" load_steps=2 format=2]
+
+[ext_resource path="res://lib/library.tres" type="GDNativeLibrary" id=1]
+
+[resource]
+resource_name = "TestEntity"
+class_name = "PlayerEntity"
+library = ExtResource( 1 )

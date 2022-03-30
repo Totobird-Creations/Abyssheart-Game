@@ -1,7 +1,7 @@
 [gd_resource type="GDNativeLibrary" format=2]
 
 [resource]
-entry/X11.64 = "res://libraries/linux.so"
-entry/X11.32 = "res://libraries/linux.so"
+entry/X11.64 = "res://lib/gdnative_linux.so"
+entry/X11.32 = "res://lib/gdnative_linux.so"
 dependency/X11.64 = [  ]
 dependency/X11.32 = [  ]

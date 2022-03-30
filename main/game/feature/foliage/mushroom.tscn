@@ -20,7 +20,6 @@ collision_layer = 2
 collision_mask = 0
 script = ExtResource( 2 )
 required_height = 5.0
-required_redius = 3.0
 normal_amount = 0.5
 
 [node name="mesh" type="MeshInstance" parent="."]

@@ -1,11 +1,15 @@
+#![feature(let_chains)]
+#![allow(unused_parens)]
+
 use gdnative::prelude::*;
 
-mod example;
+mod entity;
+mod tool;
 
 
 
-fn init(handle : InitHandle) {
-    handle.add_class::<example::HelloWorld>();
+fn init(handle : InitHandle) -> () {
+    entity::init(handle);
 }
 
 
