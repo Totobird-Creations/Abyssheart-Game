@@ -26,4 +26,4 @@ macro_rules! implGetNodeTRef {
         )*
     }
 }
-implGetNodeTRef!(KinematicBody);
+implGetNodeTRef!(Node);

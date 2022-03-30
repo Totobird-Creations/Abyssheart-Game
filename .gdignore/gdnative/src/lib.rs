@@ -3,13 +3,13 @@
 
 use gdnative::prelude::*;
 
-mod entity;
+mod generator;
 mod tool;
 
 
 
 fn init(handle : InitHandle) -> () {
-    entity::init(handle);
+    generator::init(handle);
 }
 
 

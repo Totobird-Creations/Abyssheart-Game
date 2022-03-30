@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://main/game/generator/generator.tres" type="VoxelGeneratorScript" id=1]
 [ext_resource path="res://main/game/entity/player/player.tscn" type="PackedScene" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://main/game/terroir.gd" type="Script" id=4]
 [ext_resource path="res://main/game/world.gd" type="Script" id=5]
 [ext_resource path="res://main/game/canvas.gd" type="Script" id=6]
+[ext_resource path="res://main/game/generator/feature_generator.gdns" type="Script" id=7]
 
 [sub_resource type="VoxelMesherTransvoxel" id=3]
 
@@ -117,11 +118,13 @@ material/0 = SubResource( 7 )
 
 [node name="chunks" type="Spatial" parent="terroir"]
 
+[node name="feature_generator" type="Node" parent="terroir"]
+script = ExtResource( 7 )
+
 [node name="entities" type="Spatial" parent="."]
 
 [node name="player" parent="entities" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.8006, 0 )
-controlling/active = true
 
 [node name="environment" type="WorldEnvironment" parent="."]
 environment = SubResource( 4 )
