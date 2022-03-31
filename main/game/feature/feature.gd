@@ -72,6 +72,12 @@ func get_meshes() -> Node:
 
 
 
+func get_required_height() -> float:
+	return required_height
+
+func get_required_radius() -> float:
+	return required_radius
+
 func get_spread_count() -> int:
 	return spread_count
 

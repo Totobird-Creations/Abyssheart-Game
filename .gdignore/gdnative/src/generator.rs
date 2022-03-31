@@ -1,10 +1,8 @@
-use std::{
-    collections::HashMap,
-    hash::Hash
-};
-
 use gdnative::prelude::*;
-use gdnative::api::RandomNumberGenerator;
+use gdnative::api::{
+    RandomNumberGenerator,
+    StaticBody
+};
 
 use crate::tool::*;
 
@@ -22,7 +20,11 @@ pub struct FeatureGenerator {
 }
 impl FeatureGenerator {
     fn new(_owner : &Node) -> Self {
-        return Self::default();
+        return Self {
+            seed              : 0,
+            feature_max_fails : 25,
+            features          : StringArray::new()
+        };
     }
 }
 
@@ -34,10 +36,12 @@ impl FeatureGenerator {
 
     #[export]
     fn get_features_in_chunk(&self, owner : &Node, chunk_coordinates : Vector2, chunk_size : i32) -> Dictionary<Unique> {
-        return self._get_features_in_chunk(owner, chunk_coordinates, chunk_size, true)
+        return unsafe {
+            self._get_features_in_chunk(owner, chunk_coordinates, chunk_size, true)
+        };
     }
 
-    fn _get_features_in_chunk(&self, owner : &Node, chunk_coordinates : Vector2, chunk_size : i32, check_neighbors : bool) -> Dictionary<Unique> {
+    unsafe fn _get_features_in_chunk(&self, owner : &Node, chunk_coordinates : Vector2, chunk_size : i32, check_neighbors : bool) -> Dictionary<Unique> {
         let other_features  = if (check_neighbors) {
             merge_dictionary(merge_dictionary(
                 self._get_features_in_chunk( owner, chunk_coordinates + Vector2::UP                 , chunk_size, false ),
@@ -54,53 +58,26 @@ impl FeatureGenerator {
         let     features        = Dictionary::new();
         let mut tries_remaining = self.feature_max_fails;
 
-        let resource_loader = ResourceLoader::godot_singleton();
-
         while (tries_remaining >= 1) {
-            let feature_coordinates : Vector2 = chunk_coordinates * Vector2::new(chunk_size as f32, chunk_size as f32) + Vector2::new(
-                rng.randf_range(0.0, chunk_size as f64) as f32, rng.randf_range(0.0, chunk_size as f64) as f32
-            );
+            let feature_coordinates : Vector2 = (chunk_coordinates + Vector2::new(
+                rng.randf_range(0.0, 1.0) as f32,
+                rng.randf_range(0.0, 1.0) as f32
+            )) * Vector2::new(chunk_size as f32, chunk_size as f32);
+            let elevation = owner.get_parent().unwrap().assume_safe().call("get_elevation_at_coordinates", &[Variant::new(feature_coordinates)]).try_to::<f32>().unwrap();
             let feature_position : Vector3 = Vector3::new(
                 feature_coordinates.x,
-                unsafe {
-                    owner.get_parent().unwrap().assume_safe().call("get_elevation_at_coordinates", &[Variant::new(feature_coordinates)]).try_to::<f32>().unwrap()
-                },
+                elevation + 0.1,
                 feature_coordinates.y
             );
             let feature_path = self.features.get(rng.randi_range(0, (self.features.len() - 1) as i64) as i32);
-            let feature = unsafe {
-                owner.get_parent().unwrap().assume_safe().call("load_scene", &[Variant::new(feature_path)]).to_object::<PackedScene>().unwrap().assume_safe().instance(0).unwrap()
-            };
-            let success = self.check_spawn_allowed(owner, feature, feature_position, merge_dictionary(features.duplicate(), other_features.duplicate()));
+            let feature      = owner.get_parent().unwrap().assume_safe().call("load_scene", &[Variant::new(feature_path)]).to_object::<PackedScene>().unwrap().assume_safe().instance(0).unwrap();
+            let success      = self.check_spawn_allowed(owner, feature, feature_position, merge_dictionary(features.duplicate(), other_features.duplicate()));
 
             if (success) {
                 features.insert(Variant::new(feature_position), feature);
-                for i in 0..rng.randi_range(0, unsafe {feature.assume_safe().call("get_spread_count", &[]).try_to::<i64>().unwrap()}) {
-                    let angle              = rng.randf_range(-3.1415, 3.1415) as f32;
-                    let spread_distance    = rng.randf_range(0.0, unsafe {
-                        feature.assume_safe().call("get_spread_range", &[]).try_to::<f64>().unwrap()
-                    }) as f32;
-                    let spread_coordinates = feature_coordinates + Vector2::new(angle.cos(), angle.sin()) * Vector2::new(spread_distance, spread_distance);
-                    let spread_position    = Vector3::new(
-                        spread_coordinates.x,
-                        unsafe {owner.get_parent().unwrap().assume_safe().call("get_elevation_at_coordinates", &[Variant::new(spread_coordinates)]).try_to::<f32>().unwrap()},
-                        spread_coordinates.y
-                    );
-                    let spread_feature = feature.clone();
-                    let spread_success = self.check_spawn_allowed(owner, spread_feature, spread_position, merge_dictionary(features.duplicate(), other_features.duplicate()));
-                    if (spread_success) {
-                        features.insert(Variant::new(spread_position), spread_feature);
-                    } else {
-                        unsafe {
-                            spread_feature.assume_safe().queue_free();
-                        }
-                    }
-                }
 
             } else {
-                unsafe {
-                    feature.assume_safe().queue_free();
-                }
+                feature.assume_safe().queue_free();
             }
             tries_remaining -= 1;
         }
@@ -109,8 +86,35 @@ impl FeatureGenerator {
     }
 
 
-    fn check_spawn_allowed(&self, owner : &Node, feature : Ref<Node>, feature_position : Vector3, all_features : Dictionary<Unique>) -> bool {
-        return true;
+    unsafe fn check_spawn_allowed(&self, owner : &Node, feature : Ref<Node>, feature_position : Vector3, all_features : Dictionary<Unique>) -> bool {
+        let mut success = true;
+        if (success) {
+            let height = owner.get_parent().unwrap().assume_safe().call("get_height_at_coordinates", &[
+                Variant::new(Vector2::new(feature_position.x, feature_position.z))
+            ]).try_to::<f32>().unwrap();
+            if (let Ok(required_height) = feature.assume_safe().call("get_required_height", &[]).try_to::<f32>()) {
+                success = height > required_height;
+            } else {
+                success = false;
+            }
+        }
+        if (success) {
+            for other_position in all_features.keys() {
+                let other_feature = all_features.get(other_position.clone()).unwrap().to_object::<StaticBody>().unwrap();
+                if (
+                    other_feature.assume_safe().translation().distance_to(feature_position)
+                    <=
+                    max(
+                        other_feature.assume_safe().call("get_required_radius", &[]).try_to::<f32>().unwrap(),
+                        feature.assume_safe().call("get_required_radius", &[]).try_to::<f32>().unwrap()
+                    )
+                ) {
+                    success = false;
+                    break;
+                }
+            }
+        }
+        return success
     }
 
 }

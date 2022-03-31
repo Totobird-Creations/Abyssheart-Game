@@ -120,7 +120,6 @@ material/0 = SubResource( 7 )
 
 [node name="feature_generator" type="Node" parent="terroir"]
 script = ExtResource( 7 )
-features/max_fails = 1
 features/scenes = PoolStringArray( "res://main/game/feature/foliage/mushroom.tscn", "res://main/game/feature/foliage/spore.tscn" )
 
 [node name="entities" type="Spatial" parent="."]

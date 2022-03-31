@@ -43,11 +43,11 @@ func chunk_loaded(chunk_position : Vector3) -> void:
 		chunk.name                = name
 
 		# Add features.
-		var features : Dictionary = $feature_generator.get_features_in_chunk(coordinates, $terrain.mesh_block_size)
+		var features : Dictionary = $feature_generator.get_features_in_chunk(key, $terrain.mesh_block_size)
 		for feature_position in features.keys():
 			var feature : Feature = features[feature_position]
 			chunk.add_child(feature)
-			feature.translation = (feature_position / $terrain.mesh_block_size) + Vector3.UP * 0.1
+			feature.translation = feature_position
 		$chunks.add_child(chunk)
 
 
@@ -74,7 +74,11 @@ func load_scene(path : String) -> PackedScene:
 	return success"""
 
 
-func get_elevation_at_coordinates(position : Vector2) -> bool:
+func get_elevation_at_coordinates(position : Vector2) -> float:
+	return generator.get_elevation(position)
+
+
+func get_height_at_coordinates(position : Vector2) -> float:
 	return generator.get_height(position)
 
 
