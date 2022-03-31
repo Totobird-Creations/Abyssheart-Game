@@ -18,7 +18,7 @@ pub struct FeatureGenerator {
     #[property(path="features/max_fails",default=25)]
     feature_max_fails : i32,
     #[property(path="features/scenes")]
-    features : VariantArray
+    features : StringArray
 }
 impl FeatureGenerator {
     fn new(_owner : &Node) -> Self {
@@ -33,11 +33,11 @@ impl FeatureGenerator {
 
 
     #[export]
-    fn get_features_in_chunk(&self, owner : &Node, chunk_coordinates : Vector2, chunk_size : f32) -> Dictionary<Unique> {
+    fn get_features_in_chunk(&self, owner : &Node, chunk_coordinates : Vector2, chunk_size : i32) -> Dictionary<Unique> {
         return self._get_features_in_chunk(owner, chunk_coordinates, chunk_size, true)
     }
 
-    fn _get_features_in_chunk(&self, owner : &Node, chunk_coordinates : Vector2, chunk_size : f32, check_neighbors : bool) -> Dictionary<Unique> {
+    fn _get_features_in_chunk(&self, owner : &Node, chunk_coordinates : Vector2, chunk_size : i32, check_neighbors : bool) -> Dictionary<Unique> {
         let other_features  = if (check_neighbors) {
             merge_dictionary(merge_dictionary(
                 self._get_features_in_chunk( owner, chunk_coordinates + Vector2::UP                 , chunk_size, false ),
@@ -55,7 +55,7 @@ impl FeatureGenerator {
         let mut tries_remaining = self.feature_max_fails;
 
         while (tries_remaining >= 1) {
-            let feature_coordinates : Vector2 = chunk_coordinates * Vector2::new(chunk_size, chunk_size) + Vector2::new(
+            let feature_coordinates : Vector2 = chunk_coordinates * Vector2::new(chunk_size as f32, chunk_size as f32) + Vector2::new(
                 rng.randf_range(0.0, chunk_size as f64) as f32, rng.randf_range(0.0, chunk_size as f64) as f32
             );
             let feature_position : Vector3 = Vector3::new(
@@ -65,8 +65,9 @@ impl FeatureGenerator {
                 },
                 feature_coordinates.y
             );
+            let resource_loader = ResourceLoader::godot_singleton();
             let feature = unsafe {
-                self.features.get(rng.randi_range(0, self.features.len() as i64) as i32).to_object::<PackedScene>().unwrap().assume_safe().instance(0).unwrap()
+                resource_loader.load(self.features.get(rng.randi_range(0, self.features.len() as i64) as i32), "", false).unwrap().assume_safe().get_local_scene().unwrap()
             };
             let success = self.check_spawn_allowed(owner, feature, feature_position, merge_dictionary(features.duplicate(), other_features.duplicate()));
 
@@ -98,8 +99,8 @@ impl FeatureGenerator {
                 unsafe {
                     feature.assume_safe().queue_free();
                 }
-                tries_remaining -= 1;
             }
+            tries_remaining -= 1;
         }
 
         return features;
@@ -107,7 +108,7 @@ impl FeatureGenerator {
 
 
     fn check_spawn_allowed(&self, owner : &Node, feature : Ref<Node>, feature_position : Vector3, all_features : Dictionary<Unique>) -> bool {
-        unimplemented!();
+        return true;
     }
 
 }
