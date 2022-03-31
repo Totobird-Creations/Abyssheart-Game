@@ -8,7 +8,7 @@ export(float) var required_height : float = 3.0
 export(float) var required_radius : float = 1.0
 export(float) var normal_amount   : float = 1.0
 export(float) var spread_range    : float = 0.0
-export(int)   var spread_count    : float = 0
+export(int)   var spread_count    : int   = 0
 
 var placed     : bool    = false
 var floor_cast : RayCast = RayCast.new()
@@ -69,3 +69,11 @@ func deactivate() -> void:
 
 func get_meshes() -> Node:
 	return null
+
+
+
+func get_spread_count() -> int:
+	return spread_count
+
+func get_spread_range() -> float:
+	return spread_range

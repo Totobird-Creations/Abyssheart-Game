@@ -35,8 +35,25 @@ func chunk_loaded(chunk_position : Vector3) -> void:
 	var name : String  = str(chunk_position.x) + "_" + str(chunk_position.z)
 	# Make sure chunk is not loaded.
 	if (not $chunks.get_node_or_null(name)):
-		# Load chunk.
-		$feature_generator.get_features_in_chunk(coordinates, $terrain.mesh_block_size)
+		# Create chunk.
+		var chunk    : Chunk      = CHUNK.instance()
+		chunk.world_coordinates   = coordinates
+		chunk.coordinates         = key
+		chunk.size                = $terrain.mesh_block_size
+		chunk.name                = name
+
+		# Add features.
+		var features : Dictionary = $feature_generator.get_features_in_chunk(coordinates, $terrain.mesh_block_size)
+		for feature_position in features.keys():
+			var feature : Feature = features[feature_position]
+			chunk.add_child(feature)
+			feature.translation = (feature_position / $terrain.mesh_block_size) + Vector3.UP * 0.1
+		$chunks.add_child(chunk)
+
+
+
+func load_scene(path : String) -> PackedScene:
+	return load(path) as PackedScene
 
 
 

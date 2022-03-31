@@ -54,6 +54,8 @@ impl FeatureGenerator {
         let     features        = Dictionary::new();
         let mut tries_remaining = self.feature_max_fails;
 
+        let resource_loader = ResourceLoader::godot_singleton();
+
         while (tries_remaining >= 1) {
             let feature_coordinates : Vector2 = chunk_coordinates * Vector2::new(chunk_size as f32, chunk_size as f32) + Vector2::new(
                 rng.randf_range(0.0, chunk_size as f64) as f32, rng.randf_range(0.0, chunk_size as f64) as f32
@@ -65,9 +67,9 @@ impl FeatureGenerator {
                 },
                 feature_coordinates.y
             );
-            let resource_loader = ResourceLoader::godot_singleton();
+            let feature_path = self.features.get(rng.randi_range(0, (self.features.len() - 1) as i64) as i32);
             let feature = unsafe {
-                resource_loader.load(self.features.get(rng.randi_range(0, self.features.len() as i64) as i32), "", false).unwrap().assume_safe().get_local_scene().unwrap()
+                owner.get_parent().unwrap().assume_safe().call("load_scene", &[Variant::new(feature_path)]).to_object::<PackedScene>().unwrap().assume_safe().instance(0).unwrap()
             };
             let success = self.check_spawn_allowed(owner, feature, feature_position, merge_dictionary(features.duplicate(), other_features.duplicate()));
 
