@@ -10,8 +10,8 @@ This project is currently in early development. Expect major changes in story an
 ---
 
 #### Backstory
-While exploring, you realised you were lost. With the night coming and the monsters howling, you needed a place to hide, so you crawled into a hole and fell asleep.
-\* \* \* \* \*
+While exploring, you realised you were lost. With the night coming and the monsters howling, you needed a place to hide, so you crawled into a hole and fell asleep.<br />
+\* \* \* \* \* <br />
 You wake up in pitch black. You light your lantern and discover that you're in a cave. You look around for a way out, but the exit had caved in. Realising that you're trapped, you begin you expedition looking for an escape.
 
 ---
