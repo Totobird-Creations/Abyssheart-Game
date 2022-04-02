@@ -3,12 +3,8 @@ class_name Feature
 
 
 
-export(int)   var feature_seed    : int   = 0
-export(float) var required_height : float = 3.0
-export(float) var required_radius : float = 1.0
-export(float) var normal_amount   : float = 1.0
-export(float) var spread_range    : float = 0.0
-export(int)   var spread_count    : int   = 0
+export(int)   var feature_seed  : int   = 0
+export(float) var normal_amount : float = 1.0
 
 var placed     : bool    = false
 var floor_cast : RayCast = RayCast.new()
@@ -33,7 +29,7 @@ func _ready() -> void:
 	# Prepare checks for floor.
 	add_child(floor_cast)
 	floor_cast.collision_mask = 1
-	floor_cast.cast_to        = Vector3(0.0, -100.0, 0.0)
+	floor_cast.cast_to        = Vector3(0.0, 100.0, 0.0)
 	floor_cast.enabled        = true
 
 
@@ -41,8 +37,11 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	if (not placed):
 		# If there is floor, move to floor and rotate correctly.
-		if (floor_cast.is_colliding()):
-			translation.y      = floor_cast.get_collision_point().y - 0.1
+		var position    : Vector3        = floor_cast.get_collision_point()
+		var coordinates : Vector2        = Vector2(position.x, position.z)
+		var generator   : VoxelGenerator = get_parent().get_parent().get_parent().generator
+		if (floor_cast.is_colliding() && position.y < generator.get_elevation(coordinates) + generator.get_height(coordinates) - 1.0):
+			translation.y      = position.y
 			rotation           = floor_cast.get_collision_normal() * normal_amount
 			floor_cast.enabled = false
 			floor_cast.queue_free()
@@ -72,14 +71,17 @@ func get_meshes() -> Node:
 
 
 
-func get_required_height() -> float:
-	return required_height
+static func get_spawn_chance(_terroir : Spatial, _position : Vector3) -> float:
+	return 1.0
 
-func get_required_radius() -> float:
-	return required_radius
+static func get_required_height() -> float:
+	return 1.0
 
-func get_spread_count() -> int:
-	return spread_count
+static func get_required_radius() -> float:
+	return 1.0
 
-func get_spread_range() -> float:
-	return spread_range
+static func get_spread_count() -> int:
+	return 0
+
+static func get_spread_range() -> float:
+	return 0.0

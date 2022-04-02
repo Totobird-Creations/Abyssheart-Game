@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://assets/model/feature/foliage/mushroom.obj" type="ArrayMesh" id=1]
-[ext_resource path="res://main/game/feature/foliage/spore.gd" type="Script" id=2]
+[ext_resource path="res://main/game/feature/foliage/mushroom.gd" type="Script" id=2]
 [ext_resource path="res://assets/shader/feature/foliage/mushroom_cap.tres" type="Material" id=3]
 [ext_resource path="res://assets/shader/feature/foliage/mushroom_spore_stem.tres" type="Material" id=4]
 
@@ -19,7 +19,6 @@ radius = 1.5
 collision_layer = 2
 collision_mask = 0
 script = ExtResource( 2 )
-required_height = 5.0
 normal_amount = 0.5
 
 [node name="mesh" type="MeshInstance" parent="."]

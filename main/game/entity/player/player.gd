@@ -6,7 +6,7 @@ class_name PlayerEntity
 export(bool)  var controlling           : bool  = false
 export(float) var mouse_sensitivity     : float = 0.002
 
-export(float) var max_floor_angle       : float = 0.8028515
+export(float) var max_floor_angle       : float = (PI / 2.0) * 0.625
 export(float) var gravity               : float = 40.0
 export(float) var jump_strength         : float = 10.0
 export(float) var walk_speed            : float = 10.0
@@ -26,6 +26,9 @@ export(float) var stamina_regen         : float = 10.0
 export(float) var sprint_stamina        : float = 10.0
 export(float) var jump_stamina          : float = 15.0
 export(float) var exhaust_modifier      : float = 0.375
+
+export(float) var fov_normal            : float = 70.0
+export(float) var fov_zoom              : float = 20.0
 
 var health          : float   = max_health   setget set_health
 var stamina         : float   = max_stamina  setget set_stamina
@@ -60,12 +63,20 @@ func _physics_process(delta : float) -> void:
 		modifier = exhaust_modifier
 
 	# Input
-	var input : Vector2 = Vector2(
-		Input.get_action_strength("player_move_forward") - Input.get_action_strength("player_move_backward"),
-		Input.get_action_strength("player_move_right")   - Input.get_action_strength("player_move_left")
-	)
-	var jump   : bool = Input.is_action_pressed("player_move_jump")
-	var sprint : bool = Input.is_action_pressed("player_move_sprint")
+	var input  : Vector2 = Vector2.ZERO
+	var jump   : bool    = false
+	var sprint : bool    = false
+	if (controlling):
+		input = Vector2(
+			Input.get_action_strength("player_move_forward") - Input.get_action_strength("player_move_backward"),
+			Input.get_action_strength("player_move_right")   - Input.get_action_strength("player_move_left")
+		)
+		jump   = Input.is_action_just_pressed("player_move_jump")
+		sprint = Input.is_action_pressed("player_move_sprint")
+		if (Input.is_action_just_pressed("debug_zoom")):
+			$pivot/camera/camera.fov = fov_zoom
+		if (Input.is_action_just_released("debug_zoom")):
+			$pivot/camera/camera.fov = fov_normal
 
 	# Input Direction
 	var direction : Vector3 = Vector3.ZERO

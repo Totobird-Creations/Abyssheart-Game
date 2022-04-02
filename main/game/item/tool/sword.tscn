@@ -15,9 +15,9 @@ height = 0.5
 [sub_resource type="SpatialMaterial" id=2]
 resource_local_to_scene = true
 flags_unshaded = true
-albedo_color = Color( 6.55738, 4.91161, 3.26583, 6.55738 )
+albedo_color = Color( 6.66992, 4.9959, 3.32188, 6.66992 )
 
-[node name="lantern" type="Spatial"]
+[node name="sword" type="Spatial"]
 script = ExtResource( 1 )
 colour = Color( 1, 0.74902, 0.498039, 1 )
 threshold = 4.0
@@ -35,7 +35,7 @@ mesh = SubResource( 3 )
 material/0 = SubResource( 2 )
 
 [node name="radius_light" type="OmniLight" parent="."]
-light_color = Color( 1.63935, 1.2279, 0.816458, 1.63935 )
+light_color = Color( 1.66748, 1.24898, 0.83047, 1.66748 )
 shadow_enabled = true
 omni_range = 50.0
 omni_attenuation = 5.0

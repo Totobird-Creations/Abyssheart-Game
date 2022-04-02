@@ -1,18 +1,23 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://assets/model/feature/foliage/spore.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://main/game/feature/foliage/spore.gd" type="Script" id=2]
 [ext_resource path="res://assets/shader/feature/foliage/spore_cap.tres" type="Material" id=3]
 [ext_resource path="res://assets/shader/feature/foliage/mushroom_spore_stem.tres" type="Material" id=4]
 
+[sub_resource type="SphereShape" id=1]
+radius = 0.4
+
 [node name="spore" type="StaticBody"]
 collision_layer = 2
 collision_mask = 0
 script = ExtResource( 2 )
-spread_range = 3.0
-spread_count = 4
 
 [node name="mesh" type="MeshInstance" parent="."]
 mesh = ExtResource( 1 )
 material/0 = ExtResource( 4 )
 material/1 = ExtResource( 3 )
+
+[node name="shape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0 )
+shape = SubResource( 1 )

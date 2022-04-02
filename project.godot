@@ -48,6 +48,8 @@ config/name="Abyssheart"
 run/main_scene="res://main/game/world.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="totobird_creations.abyssheart"
+boot_splash/image="res://assets/texture/empty.png"
+boot_splash/bg_color=Color( 0, 0, 0, 1 )
 config/icon="res://icon.png"
 
 [autoload]
@@ -146,6 +148,11 @@ player_move_sprint={
 debug_toggle={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":16777255,"unicode":0,"echo":false,"script":null)
+ ]
+}
+debug_zoom={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":67,"unicode":0,"echo":false,"script":null)
  ]
 }
 

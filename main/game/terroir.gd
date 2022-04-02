@@ -47,7 +47,7 @@ func chunk_loaded(chunk_position : Vector3) -> void:
 		for feature_position in features.keys():
 			var feature : Feature = features[feature_position]
 			chunk.add_child(feature)
-			feature.translation = feature_position
+			feature.translation = feature_position + Vector3.DOWN * 0.1
 		$chunks.add_child(chunk)
 
 
@@ -57,26 +57,18 @@ func load_scene(path : String) -> PackedScene:
 
 
 
-"""func check_spawn_allowed(feature : Feature, feature_coordinate : Vector2, feature_position : Vector3, all_features : Dictionary) -> bool:
-	var success : bool = true
+func get_generator() -> VoxelGenerator:
+	return generator
 
-	if (success):
-		# Check if the ceiling is high enough for this feature.
-		success = check_height_allowed(feature, feature_coordinate)
+func get_required_height(feature : PackedScene) -> float:
+	return feature.get_required_height()
 
-	if (success):
-		# Check if the feature is far enough from all nearby features.
-		for other_position in all_features.keys():
-			var other_feature : Feature = all_features[other_position]
-			if (other_position.distance_to(feature_position) <= max(other_feature.required_radius, feature.required_radius)):
-				success = false
-
-	return success"""
+func get_required_radius(feature : PackedScene) -> float:
+	return feature.get_required_radius()
 
 
 func get_elevation_at_coordinates(position : Vector2) -> float:
 	return generator.get_elevation(position)
-
 
 func get_height_at_coordinates(position : Vector2) -> float:
 	return generator.get_height(position)
