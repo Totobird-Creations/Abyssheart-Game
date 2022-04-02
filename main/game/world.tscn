@@ -281,7 +281,6 @@ margin_left = 370.0
 margin_right = 402.0
 margin_bottom = 32.0
 auto_hover = false
-hovered = true
 
 [node name="2" parent="canvas/ui/hotbar" instance=ExtResource( 9 )]
 margin_left = 406.0
