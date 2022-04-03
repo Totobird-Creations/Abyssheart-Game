@@ -27,4 +27,4 @@ func _process(_delta : float) -> void:
 
 		$terroir/terrain.get_material(0).shader       = shader
 		$environment.environment.ambient_light_energy = ambient_light
-		$canvas/ui/debug.visible                      = debug_enabled
+		$canvas/interface/debug.visible                      = debug_enabled

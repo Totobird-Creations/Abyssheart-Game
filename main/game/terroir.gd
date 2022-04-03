@@ -8,6 +8,7 @@ export(VoxelGenerator) var generator               : VoxelGenerator
 export(int, 1, 100)    var feature_placement_tries : int            = 10
 
 var chunks  : Dictionary = {}
+var threads : Array      = []
 
 var Feature : Dictionary = {
 	Mushroom = preload('res://main/game/feature/foliage/mushroom.tscn'),
@@ -32,8 +33,15 @@ func chunk_loaded(chunk_position : Vector3) -> void:
 	if (len(chunks[chunk_coordinates]) > 1):
 		return
 
+	# Create thread
+	var thread : Thread = Thread.new()
+	threads.append(thread)
+
 	# Generate features and call add function.
-	$feature_generator.get_features_in_chunk(chunk_coordinates, $terrain.mesh_block_size)
+	thread.start($feature_generator, "get_features_in_chunk", {
+		chunk_coordinates = chunk_coordinates,
+		chunk_size        = $terrain.mesh_block_size
+	})
 
 
 func chunk_generated(features : Dictionary, chunk_coordinates : Vector2) -> void:
@@ -49,7 +57,7 @@ func chunk_generated(features : Dictionary, chunk_coordinates : Vector2) -> void
 		var feature : Feature = features[feature_position]
 		chunk.add_child(feature)
 		feature.translation = feature_position + Vector3.DOWN * 0.1
-	$chunks.add_child(chunk)
+	$chunks.call_deferred("add_child", chunk)
 
 
 
@@ -87,3 +95,9 @@ func chunk_unloaded(chunk_position : Vector3) -> void:
 	var name : String  = str(chunk_coordinates.x) + "_" + str(chunk_coordinates.y)
 	if ($chunks.get_node_or_null(name)):
 		$chunks.get_node(name).queue_free()
+
+
+
+func _exit_tree() -> void:
+	for thread in threads:
+		thread.wait_to_finish()

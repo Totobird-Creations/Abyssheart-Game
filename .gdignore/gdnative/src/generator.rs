@@ -1,28 +1,15 @@
 use gdnative::prelude::*;
-use gdnative::api::{
-    RandomNumberGenerator,
-    StaticBody
+use gdnative::{
+    api::{
+        RandomNumberGenerator,
+        StaticBody
+    },
+    export::user_data::MutexData
 };
 
 use crate::tool::*;
 
 
-
-#[derive(NativeClass, Default)]
-#[inherit(Node)]
-pub struct FeatureGenerator {
-    #[property(path="seed",default=0)]
-    seed : i32,
-    #[property(path="features/max_fails",default=25)]
-    feature_max_fails : i32,
-    #[property(path="features/scenes")]
-    features : StringArray
-}
-impl FeatureGenerator {
-    fn new(_owner : &Node) -> Self {
-        return Self::default();
-    }
-}
 
 struct FeatureGeneratorData {
     pub rng             : Ref<RandomNumberGenerator, Unique>,
@@ -33,12 +20,36 @@ struct FeatureGeneratorData {
 
 
 
+#[derive(NativeClass, Default)]
+#[inherit(Node)]
+#[user_data(MutexData<FeatureGenerator>)]
+pub struct FeatureGenerator {
+    #[property(path="seed",default=0)]
+    seed : i32,
+    #[property(path="features/max_fails",default=25)]
+    feature_max_fails : i32,
+    #[property(path="features/scenes")]
+    features : StringArray
+}
+
+impl FeatureGenerator {
+    fn new(_owner : &Node) -> Self {
+        return Self::default();
+    }
+}
+
+
+
 #[methods]
 impl FeatureGenerator {
 
 
     #[export]
-    fn get_features_in_chunk(&self, owner : &Node, chunk_coordinates : Vector2, chunk_size : i32) -> () {
+    fn get_features_in_chunk(&self, owner : &Node, data : Dictionary) -> () {
+        // Unwrap arguments.
+        let chunk_coordinates = data.get("chunk_coordinates").unwrap().to::<Vector2>().unwrap();
+        let chunk_size        = data.get("chunk_size").unwrap().to::<i32>().unwrap();
+
         // Call base get features method wrapped in unsafe.
         unsafe {
             let features = self._get_features_in_chunk(owner, chunk_coordinates, chunk_size, true);
