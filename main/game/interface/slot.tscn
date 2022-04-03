@@ -87,8 +87,9 @@ tracks/1/keys = {
 }
 
 [node name="slot" type="Control"]
-rect_min_size = Vector2( 32, 32 )
+rect_min_size = Vector2( 64, 64 )
 script = ExtResource( 1 )
+highlight = Color( 0.25098, 0.74902, 1, 1 )
 
 [node name="separation" type="ColorRect" parent="."]
 anchor_right = 1.0
@@ -111,7 +112,7 @@ anchor_bottom = 1.0
 color = Color( 1, 1, 1, 0 )
 
 [node name="highlight" type="ColorRect" parent="."]
-modulate = Color( 0.25, 0.75, 1, 1 )
+modulate = Color( 0.25098, 0.74902, 1, 1 )
 material = SubResource( 2 )
 anchor_right = 1.0
 anchor_bottom = 1.0

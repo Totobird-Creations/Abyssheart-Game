@@ -6,6 +6,6 @@ code = "shader_type spatial;
 
 
 void fragment() {
-	ALBEDO = vec3(0.25);
+	ALBEDO = vec3(0.225);
 }
 "

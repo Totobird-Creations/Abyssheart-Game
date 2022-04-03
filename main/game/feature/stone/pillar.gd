@@ -8,17 +8,16 @@ func get_meshes() -> Node:
 
 
 static func get_spawn_chance(_terroir : Spatial, _position : Vector3) -> float:
-	return 0.375
+	return 0.25
 
 static func get_required_height() -> float:
 	return 10.0
 
 static func get_required_radius() -> float:
-	return 25.0
+	return 5.0
 
 static func get_spread_count() -> int:
 	return 0
 
 static func get_spread_range() -> float:
 	return 0.0
-

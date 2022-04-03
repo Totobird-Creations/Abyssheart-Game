@@ -30,3 +30,23 @@ pub fn max(a : f32, b : f32) -> f32 {
         return b;
     }
 }
+
+
+
+pub fn position_to_coordinates(position : Vector3) -> Vector2 {
+    return Vector2::new(position.x, position.z);
+}
+
+pub fn coordinates_to_position(coordinates : Vector2, owner : &Node) -> Vector3 {
+    return Vector3::new(
+        coordinates.x,
+        unsafe {
+            owner.get_parent().unwrap().assume_safe()
+                .call("get_elevation_at_coordinates", &[
+                    Variant::new(coordinates)
+                ])
+                .try_to::<f32>().unwrap()
+        },
+        coordinates.y
+    );
+}

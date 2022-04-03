@@ -22,33 +22,34 @@ func _ready() -> void:
 
 
 func chunk_loaded(chunk_position : Vector3) -> void:
-	var key : Vector2 = Vector2(chunk_position.x, chunk_position.z)
+	var chunk_coordinates : Vector2 = Vector2(chunk_position.x, chunk_position.z)
 	# Add chunk to list of loaded chunks.
-	if (not chunks.has(key)):
-		chunks[key] = []
-	if (chunks[key].has(int(chunk_position.y))):
+	if (not chunks.has(chunk_coordinates)):
+		chunks[chunk_coordinates] = []
+	if (chunks[chunk_coordinates].has(int(chunk_position.y))):
 		return
-	chunks[key].append(int(chunk_position.y))
+	chunks[chunk_coordinates].append(int(chunk_position.y))
+	if (len(chunks[chunk_coordinates]) > 1):
+		return
 
-	var coordinates : Vector2 = key * $terrain.mesh_block_size
+	# Generate features and call add function.
+	$feature_generator.get_features_in_chunk(chunk_coordinates, $terrain.mesh_block_size)
 
-	var name : String  = str(chunk_position.x) + "_" + str(chunk_position.z)
-	# Make sure chunk is not loaded.
-	if (not $chunks.get_node_or_null(name)):
-		# Create chunk.
-		var chunk    : Chunk      = CHUNK.instance()
-		chunk.world_coordinates   = coordinates
-		chunk.coordinates         = key
-		chunk.size                = $terrain.mesh_block_size
-		chunk.name                = name
 
-		# Add features.
-		var features : Dictionary = $feature_generator.get_features_in_chunk(key, $terrain.mesh_block_size)
-		for feature_position in features.keys():
-			var feature : Feature = features[feature_position]
-			chunk.add_child(feature)
-			feature.translation = feature_position + Vector3.DOWN * 0.1
-		$chunks.add_child(chunk)
+func chunk_generated(features : Dictionary, chunk_coordinates : Vector2) -> void:
+	# Build chunk.
+	var chunk    : Chunk      = CHUNK.instance()
+	chunk.world_coordinates   = chunk_coordinates * $terrain.mesh_block_size
+	chunk.coordinates         = chunk_coordinates
+	chunk.size                = $terrain.mesh_block_size
+	chunk.name                = str(chunk_coordinates.x) + "_" + str(chunk_coordinates.y)
+
+	# Add features.
+	for feature_position in features.keys():
+		var feature : Feature = features[feature_position]
+		chunk.add_child(feature)
+		feature.translation = feature_position + Vector3.DOWN * 0.1
+	$chunks.add_child(chunk)
 
 
 
@@ -67,22 +68,22 @@ func get_required_radius(feature : PackedScene) -> float:
 	return feature.get_required_radius()
 
 
-func get_elevation_at_coordinates(position : Vector2) -> float:
-	return generator.get_elevation(position)
+func get_elevation_at_coordinates(coordinates : Vector2) -> float:
+	return generator.get_elevation(coordinates)
 
-func get_height_at_coordinates(position : Vector2) -> float:
-	return generator.get_height(position)
+func get_height_at_coordinates(coordinates : Vector2) -> float:
+	return generator.get_height(coordinates)
 
 
 
 func chunk_unloaded(chunk_position : Vector3) -> void:
-	var key : Vector2 = Vector2(chunk_position.x, chunk_position.z)
-	chunks[key].erase(int(chunk_position.y))
-	# If chunk is still loaded, ancel
-	if (len(chunks[key]) >= 1):
+	var chunk_coordinates : Vector2 = Vector2(chunk_position.x, chunk_position.z)
+	chunks[chunk_coordinates].erase(int(chunk_position.y))
+	# If chunk is still loaded, cancel
+	if (len(chunks[chunk_coordinates]) >= 1):
 		return
 
 	# Unload chunk
-	var name : String  = str(chunk_position.x) + "_" + str(chunk_position.z)
+	var name : String  = str(chunk_coordinates.x) + "_" + str(chunk_coordinates.y)
 	if ($chunks.get_node_or_null(name)):
 		$chunks.get_node(name).queue_free()

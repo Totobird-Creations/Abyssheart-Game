@@ -92,10 +92,6 @@ func _physics_process(delta : float) -> void:
 	direction.y = 0.0
 	direction = direction.normalized()
 
-	# Previous Values
-	var prev_velocity  : Vector3 = velocity
-	var prev_on_ground : bool    = is_on_floor() || is_on_wall()
-
 	# Snapping
 	if (is_on_floor()):
 		snap = -get_floor_normal() - get_floor_velocity() * delta

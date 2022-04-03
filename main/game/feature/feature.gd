@@ -21,10 +21,9 @@ func _ready() -> void:
 	deactivate()
 
 	# Rotate mesh randomly.
-	var rot  : float                 = rng.randf_range(-PI, PI)
-	var mesh : Spatial               = get_meshes()
+	var mesh : Spatial = get_meshes()
 	if (mesh):
-		mesh.rotation.y = rot
+		mesh.rotation.y = rng.randf_range(-PI, PI)
 
 	# Prepare checks for floor.
 	add_child(floor_cast)

@@ -33,10 +33,8 @@ shape = SubResource( 1 )
 
 [node name="shape_cap" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 0 )
-visible = false
 shape = SubResource( 2 )
 
 [node name="shape_bulb" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.4, 0 )
-visible = false
 shape = SubResource( 7 )

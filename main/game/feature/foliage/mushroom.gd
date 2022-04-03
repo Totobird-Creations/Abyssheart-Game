@@ -7,8 +7,8 @@ func get_meshes() -> Node:
 
 
 
-static func get_spawn_chance(_terroir : Spatial, _position : Vector3) -> float:
-	return 0.5
+static func get_spawn_chance(terroir : Spatial, position : Vector3) -> float:
+	return terroir.generator.get_mushiness(Vector2(position.x, position.z))
 
 static func get_required_height() -> float:
 	return 5.0

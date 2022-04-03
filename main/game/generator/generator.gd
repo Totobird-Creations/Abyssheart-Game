@@ -6,20 +6,30 @@ class_name Generator
 
 const channel : int = VoxelBuffer.CHANNEL_SDF
 
-export(int)              var world_seed      : int              = 0
-export(OpenSimplexNoise) var tunnel_map      : OpenSimplexNoise # Passages
-export(float)            var tunnel_scale    : float            = 64.0
-export(Curve)            var tunnel_curve    : Curve
-export(OpenSimplexNoise) var height_map      : OpenSimplexNoise # Distance between floor and ceiling
-export(float)            var height_scale    : float            = 128.0
-export(float)            var height_min      : float            = 16.0
-export(float)            var height_max      : float            = 64.0
-export(OpenSimplexNoise) var elevation_map   : OpenSimplexNoise # Height relative to 0 y world coords
-export(float)            var elevation_scale : float            = 512.0
-export(float)            var elevation_max   : float            = 32.0
-export(OpenSimplexNoise) var roughness_map   : OpenSimplexNoise # Smaller noise layer added to elevation to add bumps to the floor and ceiling
-export(float)            var roughness_scale : float            = 4.0
-export(float)            var roughness_max   : float            = 1.0
+export(int)              var world_seed        : int              = 0
+export(OpenSimplexNoise) var tunnel_map        : OpenSimplexNoise # Passages.
+export(float)            var tunnel_scale      : float            = 64.0
+export(Curve)            var tunnel_curve      : Curve
+export(OpenSimplexNoise) var height_map        : OpenSimplexNoise # Distance between floor and ceiling.
+export(float)            var height_scale      : float            = 128.0
+export(float)            var height_min        : float            = 16.0
+export(float)            var height_max        : float            = 64.0
+export(OpenSimplexNoise) var elevation_map     : OpenSimplexNoise # Height relative to 0 y world coords.
+export(float)            var elevation_scale   : float            = 512.0
+export(float)            var elevation_max     : float            = 32.0
+export(OpenSimplexNoise) var roughness_map     : OpenSimplexNoise # Smaller noise layer added to elevation to add bumps to the floor and ceiling.
+export(float)            var roughness_scale   : float            = 4.0
+export(float)            var roughness_max     : float            = 1.0
+
+export(OpenSimplexNoise) var temperature_map   : OpenSimplexNoise # Used for generating other properties.
+export(Curve)            var temperature_curve : Curve
+export(float)            var temperature_scale : float            = 10.0
+export(OpenSimplexNoise) var humidity_map      : OpenSimplexNoise # Used for generating other properties.
+export(Curve)            var humidity_curve    : Curve
+export(float)            var humidity_scale    : float            = 10.0
+export(OpenSimplexNoise) var mushiness_map     : OpenSimplexNoise # Used for generating other properties.
+export(Curve)            var mushiness_curve   : Curve
+export(float)            var mushiness_scale   : float            = 10.0
 
 
 
@@ -30,10 +40,12 @@ func _get_used_channels_mask() -> int:
 
 func _generate_block(buffer : VoxelBuffer, origin : Vector3, lod : int) -> void:
 	# Set correct seeds.
-	tunnel_map.seed    = world_seed
-	height_map.seed    = world_seed + 1
-	elevation_map.seed = world_seed + 2
-	roughness_map.seed = world_seed + 3
+	tunnel_map.seed      = hash(world_seed)
+	height_map.seed      = hash(world_seed + 1)
+	elevation_map.seed   = hash(world_seed + 2)
+	roughness_map.seed   = hash(world_seed + 3)
+	temperature_map.seed = hash(world_seed + 4)
+	humidity_map.seed    = hash(world_seed + 5)
 
 	# Make sure lod is deactivated.
 	if (lod != 0):
@@ -84,3 +96,25 @@ func get_height(position : Vector2) -> float:
 	var height : float = height_map.get_noise_2dv(position / height_scale)
 	height = height_min + height * (height_max - height_min)
 	return height
+
+
+
+
+
+func get_temperature(position : Vector2) -> float:
+	var temperature : float = temperature_map.get_noise_2dv(position / temperature_scale) / 2.0 + 0.5
+	temperature = temperature_curve.interpolate(temperature)
+	return temperature
+
+func get_humidity(position : Vector2) -> float:
+	var humidity : float = humidity_map.get_noise_2dv(position / humidity_scale) / 2.0 + 0.5
+	humidity = humidity_curve.interpolate(humidity)
+	return humidity
+
+func get_mushiness(position : Vector2) -> float:
+	var mushiness             : float = mushiness_map.get_noise_2dv(position / mushiness_scale) / 2.0 + 0.5
+	mushiness                          = mushiness_curve.interpolate(mushiness)
+	var mushiness_temperature : float  = pow(1.0 - abs(get_temperature(position) - 0.25), 5.0);
+	var mushiness_humidity    : float  = pow(1.0 - abs(get_humidity(position) - 1.0), 3.0);
+	mushiness                         *= pow((mushiness_temperature + mushiness_humidity) / 2.0, 1.0);
+	return clamp(mushiness, 0.0, 1.0)
