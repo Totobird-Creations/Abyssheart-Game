@@ -1,4 +1,7 @@
 .gdignore/gdnative/target/
 .gdignore/gdnative/Cargo.lock
+.gdignore/export/
+.gdignore/build/
+export_presets.cfg
 .import/
 **/*.import

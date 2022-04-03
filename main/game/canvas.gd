@@ -11,6 +11,14 @@ var prev_stamina_exhaust : bool  = false
 
 
 
+func _ready() -> void:
+	var version : String = ProjectSettings.get_setting("application/config/name")
+	if (! OS.has_feature("standalone")):
+		version += " / Development"
+	$interface/debug/version.text = version
+
+
+
 func _physics_process(delta : float) -> void:
 	# Interpolate health bar to correct value
 	var prev_health : float = 1.0 - $interface/bars/health/container/bar.anchor_top

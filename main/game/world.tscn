@@ -1,11 +1,10 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://main/game/generator/generator.tres" type="VoxelGeneratorScript" id=1]
 [ext_resource path="res://main/game/entity/player/player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/shader/terrain/normal.tres" type="Shader" id=3]
 [ext_resource path="res://main/game/terroir.gd" type="Script" id=4]
 [ext_resource path="res://main/game/world.gd" type="Script" id=5]
-[ext_resource path="res://main/game/canvas.gd" type="Script" id=6]
 [ext_resource path="res://main/game/generator/feature.gdns" type="Script" id=7]
 [ext_resource path="res://main/game/interface/interface.tscn" type="PackedScene" id=8]
 
@@ -62,10 +61,7 @@ controlling = true
 [node name="environment" type="WorldEnvironment" parent="."]
 environment = SubResource( 4 )
 
-[node name="canvas" type="CanvasLayer" parent="."]
-script = ExtResource( 6 )
-
-[node name="interface" parent="canvas" instance=ExtResource( 8 )]
+[node name="canvas" parent="." instance=ExtResource( 8 )]
 
 [connection signal="block_loaded" from="terroir/terrain" to="terroir" method="chunk_loaded"]
 [connection signal="block_unloaded" from="terroir/terrain" to="terroir" method="chunk_unloaded"]
