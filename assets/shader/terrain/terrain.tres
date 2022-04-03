@@ -1,0 +1,90 @@
+[gd_resource type="Shader" format=2]
+
+[resource]
+code = "shader_type spatial;
+render_mode depth_draw_always, world_vertex_coords;
+
+
+
+vec4 mod289(vec4 x) {
+	return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
+vec4 perm(vec4 x) {
+	return mod289(((x * 34.0) + 1.0) * x);
+}
+float noise(vec3 p) {
+    vec3 a = floor(p);
+    vec3 d = p - a;
+    d = d * d * (3.0 - 2.0 * d);
+    vec4 b = a.xxyy + vec4(0.0, 1.0, 0.0, 1.0);
+    vec4 k1 = perm(b.xyxy);
+    vec4 k2 = perm(k1.xyxy + b.zzww);
+    vec4 c = k2 + a.zzzz;
+    vec4 k3 = perm(c);
+    vec4 k4 = perm(c + 1.0);
+    vec4 o1 = fract(k3 * (1.0 / 41.0));
+    vec4 o2 = fract(k4 * (1.0 / 41.0));
+    vec4 o3 = o2 * d.z + o1 * (1.0 - d.z);
+    vec2 o4 = o3.yw * d.x + o3.xz * (1.0 - d.x);
+    return o4.y * d.y + o4.x * (1.0 - d.y);
+}
+
+
+
+uniform bool  debug_mode                          = false;
+uniform float ceiling_grey : hint_range(0.0, 1.0) = 0.5;
+
+varying vec3  position;
+varying float angle;
+
+
+
+void vertex() {
+	position = VERTEX;
+	angle    = dot(NORMAL, vec3(0.0, 1.0, 0.0));
+}
+
+
+
+void fragment() {
+	// Stone
+	vec3  albedo_stone    = vec3(0.225);
+	float specular_stone  = 0.0;
+	float roughness_stone = 1.0;
+	float metallic_stone  = 0.0;
+
+	// Mushroom
+	vec3  albedo_mushroom    = vec3(0.25 * (noise(position) * 0.5 + 0.5), 0.125, 0.5);
+	float specular_mushroom  = 0.0;
+	float roughness_mushroom = 1.0;
+	float metallic_mushroom  = 0.0;
+
+	// Mud
+	vec3  albedo_mud    = vec3(0.5, 0.25, 0.0);
+	float specular_mud  = 1.0;
+	float roughness_mud = 0.25;
+	float metallic_mud  = 0.25;
+
+	// Calculate
+	vec3  albedo    = albedo_mushroom;
+	float specular  = specular_mushroom;
+	float roughness = roughness_mushroom;
+	float metallic  = metallic_mushroom;
+
+	if (angle < 0.0) {
+		albedo    = albedo    + ( albedo_stone    - albedo    ) * ceiling_grey;
+		specular  = specular  + ( specular_stone  - specular  ) * ceiling_grey;
+		roughness = roughness + ( roughness_stone - roughness ) * ceiling_grey;
+		metallic  = metallic  + ( metallic_stone  - metallic  ) * ceiling_grey;
+	}
+
+	// Set
+	ALBEDO = albedo;
+	SPECULAR  =  specular;
+	ROUGHNESS =  roughness;
+	METALLIC  =  metallic;
+	if (debug_mode) {
+		ALPHA *= 0.5;
+	}
+}
+"

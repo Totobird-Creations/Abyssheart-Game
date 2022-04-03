@@ -1,5 +1,6 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=21 format=2]
 
+[ext_resource path="res://assets/font/oxanium/regular.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://main/game/hotbar.gd" type="Script" id=2]
 [ext_resource path="res://assets/font/oxanium/bold.ttf" type="DynamicFontData" id=3]
 [ext_resource path="res://assets/texture/interface/slot/off.png" type="Texture" id=4]
@@ -79,9 +80,21 @@ tracks/0/keys = {
 "values": [ Color( 0, 0, 0, 0.498039 ), Color( 1, 0, 0, 0.74902 ), Color( 1, 0, 0, 0.74902 ), Color( 0, 0, 0, 0.498039 ), Color( 1, 0, 0, 0.74902 ), Color( 1, 0, 0, 0.74902 ), Color( 0, 0, 0, 0.498039 ), Color( 1, 0, 0, 0.74902 ), Color( 1, 0, 0, 0.74902 ), Color( 0, 0, 0, 0.498039 ) ]
 }
 
+[sub_resource type="DynamicFont" id=37]
+size = 40
+font_data = ExtResource( 3 )
+
 [sub_resource type="DynamicFont" id=31]
 size = 32
 font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=34]
+size = 28
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=35]
+size = 28
+font_data = ExtResource( 1 )
 
 [sub_resource type="Animation" id=32]
 length = 0.001
@@ -272,29 +285,221 @@ anchor_right = 1.0
 margin_left = 8.0
 margin_top = 8.0
 margin_right = -8.0
-margin_bottom = 41.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 37 )
+text = "Abyssheart Alpha"
+
+[node name="left" type="HBoxContainer" parent="interface/debug"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 72.0
+margin_right = -8.0
+custom_constants/separation = 32
+
+[node name="key" type="VBoxContainer" parent="interface/debug/left"]
+margin_right = 197.0
+margin_bottom = 1128.0
+
+[node name="player" type="Label" parent="interface/debug/left/key"]
+margin_right = 197.0
+margin_bottom = 33.0
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_fonts/font = SubResource( 31 )
-text = "Developmental Environment"
-clip_text = true
+text = "Player"
 
-[node name="warning" type="Label" parent="interface/debug"]
+[node name="position" type="Label" parent="interface/debug/left/key"]
+margin_top = 37.0
+margin_right = 197.0
+margin_bottom = 66.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 34 )
+text = "Position"
+
+[node name="velocity" type="Label" parent="interface/debug/left/key"]
+margin_top = 70.0
+margin_right = 197.0
+margin_bottom = 99.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 34 )
+text = "Velocity"
+
+[node name="rotation" type="Label" parent="interface/debug/left/key"]
+margin_top = 103.0
+margin_right = 197.0
+margin_bottom = 132.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 34 )
+text = "Rotation"
+
+[node name="spacer_0" type="Control" parent="interface/debug/left/key"]
+margin_top = 136.0
+margin_right = 197.0
+margin_bottom = 168.0
+rect_min_size = Vector2( 0, 32 )
+
+[node name="environment" type="Label" parent="interface/debug/left/key"]
+margin_top = 172.0
+margin_right = 197.0
+margin_bottom = 205.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 31 )
+text = "Environment"
+
+[node name="temperature" type="Label" parent="interface/debug/left/key"]
+margin_top = 209.0
+margin_right = 197.0
+margin_bottom = 238.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 34 )
+text = "Temperature"
+
+[node name="humidity" type="Label" parent="interface/debug/left/key"]
+margin_top = 242.0
+margin_right = 197.0
+margin_bottom = 271.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 34 )
+text = "Humidity"
+
+[node name="mushiness" type="Label" parent="interface/debug/left/key"]
+margin_top = 275.0
+margin_right = 197.0
+margin_bottom = 304.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 34 )
+text = "Mushiness"
+
+[node name="value" type="VBoxContainer" parent="interface/debug/left"]
+margin_left = 229.0
+margin_right = 2032.0
+margin_bottom = 1128.0
+size_flags_horizontal = 3
+
+[node name="player" type="Label" parent="interface/debug/left/value"]
+margin_right = 1803.0
+margin_bottom = 33.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 31 )
+
+[node name="position" type="Label" parent="interface/debug/left/value"]
+margin_top = 37.0
+margin_right = 1803.0
+margin_bottom = 66.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 35 )
+text = "0.0 0.0 0.0"
+
+[node name="velocity" type="Label" parent="interface/debug/left/value"]
+margin_top = 70.0
+margin_right = 1803.0
+margin_bottom = 99.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 35 )
+text = "0.0 0.0 0.0"
+
+[node name="rotation" type="Label" parent="interface/debug/left/value"]
+margin_top = 103.0
+margin_right = 1803.0
+margin_bottom = 132.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 35 )
+text = "0.0 0.0"
+
+[node name="spacer_1" type="Control" parent="interface/debug/left/value"]
+margin_top = 136.0
+margin_right = 1803.0
+margin_bottom = 168.0
+rect_min_size = Vector2( 0, 32 )
+
+[node name="environment" type="Label" parent="interface/debug/left/value"]
+margin_top = 172.0
+margin_right = 1803.0
+margin_bottom = 205.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 31 )
+
+[node name="temperature" type="Label" parent="interface/debug/left/value"]
+margin_top = 209.0
+margin_right = 1803.0
+margin_bottom = 238.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 35 )
+text = "0.0"
+
+[node name="humidity" type="Label" parent="interface/debug/left/value"]
+margin_top = 242.0
+margin_right = 1803.0
+margin_bottom = 271.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 35 )
+text = "0.0"
+
+[node name="mushiness" type="Label" parent="interface/debug/left/value"]
+margin_top = 275.0
+margin_right = 1803.0
+margin_bottom = 304.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 35 )
+text = "0.0"
+
+[node name="notice" type="Label" parent="interface/debug"]
 anchor_right = 1.0
 margin_left = 8.0
 margin_top = 8.0
 margin_right = -8.0
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_fonts/font = SubResource( 31 )
+custom_fonts/font = SubResource( 37 )
 text = "Debug Mode Enabled"
 align = 2
 clip_text = true
 
-[node name="blink" type="AnimationPlayer" parent="interface/debug/warning"]
+[node name="blink" type="AnimationPlayer" parent="interface/debug/notice"]
 autoplay = "main"
 anims/RESET = SubResource( 32 )
 anims/main = SubResource( 33 )
+
+[node name="right" type="HBoxContainer" parent="interface/debug"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 72.0
+margin_right = -8.0
+alignment = 2
+
+[node name="column" type="VBoxContainer" parent="interface/debug/right"]
+margin_left = 1345.0
+margin_right = 2032.0
+margin_bottom = 1128.0
+
+[node name="warning" type="Label" parent="interface/debug/right/column"]
+margin_right = 687.0
+margin_bottom = 105.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 31 )
+text = "Note that playing with the debug menu open
+may cause unintended performance loss.
+Only open this menu when it is necessary."
+align = 2
 
 [node name="crosshair" type="Control" parent="interface"]
 anchor_left = 0.5

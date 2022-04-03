@@ -14,7 +14,7 @@ static func get_required_height() -> float:
 	return 10.0
 
 static func get_required_radius() -> float:
-	return 5.0
+	return 10.0
 
 static func get_spread_count() -> int:
 	return 0

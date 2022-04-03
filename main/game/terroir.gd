@@ -44,12 +44,13 @@ func chunk_loaded(chunk_position : Vector3) -> void:
 
 	# Generate features and call add function.
 	thread.start($feature_generator, "get_features_in_chunk", {
+		thread            = thread,
 		chunk_coordinates = chunk_coordinates,
 		chunk_size        = $terrain.mesh_block_size
 	})
 
 
-func chunk_generated(features : Dictionary, chunk_coordinates : Vector2) -> void:
+func chunk_generated(thread : Thread, features : Dictionary, chunk_coordinates : Vector2) -> void:
 	# Build chunk.
 	var chunk    : Chunk      = CHUNK.instance()
 	chunk.world_coordinates   = chunk_coordinates * $terrain.mesh_block_size
@@ -63,6 +64,9 @@ func chunk_generated(features : Dictionary, chunk_coordinates : Vector2) -> void
 		chunk.add_child(feature)
 		feature.translation = feature_position + Vector3.DOWN * 0.1
 	$chunks.call_deferred("add_child", chunk)
+
+	# Remove thread
+	threads.erase(thread)
 
 
 

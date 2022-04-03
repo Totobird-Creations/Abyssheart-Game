@@ -48,6 +48,7 @@ impl FeatureGenerator {
     #[export]
     fn get_features_in_chunk(&self, owner : &Node, data : Dictionary) -> () {
         // Unwrap arguments.
+        let thread            = data.get("thread").unwrap();
         let chunk_coordinates = data.get("chunk_coordinates").unwrap().to::<Vector2>().unwrap();
         let chunk_size        = data.get("chunk_size").unwrap().to::<i32>().unwrap();
 
@@ -56,6 +57,7 @@ impl FeatureGenerator {
             let features = self._get_features_in_chunk(owner, chunk_coordinates, chunk_size, true);
             owner.get_parent().unwrap().assume_safe()
                 .call_deferred("chunk_generated", &[
+                    thread,
                     Variant::new(features),
                     Variant::new(chunk_coordinates)
                 ]);
@@ -150,7 +152,7 @@ impl FeatureGenerator {
             );
             if (success) {
                 // Can place feature, add to to-be-placed list.
-                data.features.insert(Variant::new(feature_position), feature_scene.assume_safe().instance(0));
+                data.features.insert(Variant::new(feature_position), feature_scene.assume_safe().instance(0).unwrap());
 
                 // Get spreads.
                 if (spread_allowed) {

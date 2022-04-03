@@ -2,7 +2,7 @@
 
 [ext_resource path="res://main/game/generator/generator.tres" type="VoxelGeneratorScript" id=1]
 [ext_resource path="res://main/game/entity/player/player.tscn" type="PackedScene" id=2]
-[ext_resource path="res://assets/shader/terrain/normal.tres" type="Shader" id=3]
+[ext_resource path="res://assets/shader/terrain/terrain.tres" type="Shader" id=3]
 [ext_resource path="res://main/game/terroir.gd" type="Script" id=4]
 [ext_resource path="res://main/game/world.gd" type="Script" id=5]
 [ext_resource path="res://main/game/generator/feature.gdns" type="Script" id=7]
@@ -10,8 +10,10 @@
 
 [sub_resource type="VoxelMesherTransvoxel" id=3]
 
-[sub_resource type="ShaderMaterial" id=7]
+[sub_resource type="ShaderMaterial" id=6]
 shader = ExtResource( 3 )
+shader_param/debug_mode = false
+shader_param/ceiling_grey = 0.5
 
 [sub_resource type="ProceduralSky" id=5]
 
@@ -43,7 +45,7 @@ mesher = SubResource( 3 )
 max_view_distance = 64
 collision_mask = 0
 run_stream_in_editor = false
-material/0 = SubResource( 7 )
+material/0 = SubResource( 6 )
 
 [node name="chunks" type="Spatial" parent="terroir"]
 

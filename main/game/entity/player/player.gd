@@ -152,6 +152,12 @@ func _physics_process(delta : float) -> void:
 		self.stamina += stamina_regen * delta
 	stamina_timer = clamp(stamina_timer - delta, 0.0, stamina_cooldown)
 
+	# Debug
+	if (get_parent().get_parent().render_mode == get_parent().get_parent().RenderMode.Debug):
+		get_node("../../canvas").data_position = translation
+		get_node("../../canvas").data_velocity = velocity
+		get_node("../../canvas").data_rotation = Vector2(rotation.y, $pivot/camera.rotation.x)
+
 
 
 func _input(event : InputEvent) -> void:

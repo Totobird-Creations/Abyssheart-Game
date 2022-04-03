@@ -56,6 +56,10 @@ config/icon="res://icon.png"
 
 Tool="*res://main/tool.gd"
 
+[debug]
+
+gdscript/warnings/return_value_discarded=false
+
 [display]
 
 window/size/width=2048

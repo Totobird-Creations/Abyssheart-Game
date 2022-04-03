@@ -11,10 +11,9 @@ var render_mode : int = RenderMode.Normal
 
 
 func _process(_delta : float) -> void:
-	if (Input.is_action_just_pressed('debug_toggle')):
-		var shader             : Shader = preload('res://assets/shader/terrain/normal.tres')
-		var ambient_light      : float  = 0.0
-		var debug_enabled      : bool   = false
+	if (Input.is_action_just_pressed("debug_toggle")):
+		var ambient_light : float  = 0.0
+		var debug_enabled : bool   = false
 
 		render_mode += 1
 		if (render_mode >= 2):
@@ -22,10 +21,10 @@ func _process(_delta : float) -> void:
 
 		match (render_mode):
 			RenderMode.Debug:
-				shader             = preload('res://assets/shader/terrain/debug.tres')
-				ambient_light      = 0.25
-				debug_enabled      = true
+				if (! OS.has_feature("standalone")):
+					ambient_light = 0.25
+				debug_enabled = true
 
-		$terroir/terrain.get_material(0).shader       = shader
+		$terroir/terrain.get_material(0).set_shader_param("debug_mode", debug_enabled)
 		$environment.environment.ambient_light_energy = ambient_light
 		$canvas/interface/debug.visible               = debug_enabled
