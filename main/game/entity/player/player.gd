@@ -73,7 +73,8 @@ func _physics_process(delta : float) -> void:
 		)
 		jump   = Input.is_action_just_pressed("player_move_jump")
 		sprint = Input.is_action_pressed("player_move_sprint")
-		if (Input.is_action_just_pressed("debug_zoom")):
+		var world : Spatial = get_parent().get_parent();
+		if (Input.is_action_just_pressed("debug_zoom") && world.render_mode == world.RenderMode.Debug):
 			$pivot/camera/camera.fov = fov_zoom
 		if (Input.is_action_just_released("debug_zoom")):
 			$pivot/camera/camera.fov = fov_normal
