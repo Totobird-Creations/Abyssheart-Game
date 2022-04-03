@@ -2,6 +2,7 @@ use gdnative::prelude::*;
 use gdnative::{
     api::{
         RandomNumberGenerator,
+        Script,
         StaticBody
     },
     export::user_data::MutexData
@@ -26,7 +27,7 @@ struct FeatureGeneratorData {
 pub struct FeatureGenerator {
     #[property(path="seed",default=0)]
     seed : i32,
-    #[property(path="features/max_fails",default=25)]
+    #[property(path="features/max_fails",default=10)]
     feature_max_fails : i32,
     #[property(path="features/scenes")]
     features : StringArray
@@ -105,15 +106,21 @@ impl FeatureGenerator {
             );
             let feature_scene = owner.get_parent().unwrap().assume_safe()
                 .call("load_scene", &[
-                    Variant::new(feature_path)
+                    Variant::new(feature_path.clone() + GodotString::from(".tscn"))
                 ])
                 .to_object::<PackedScene>().unwrap();
+            let feature_script = owner.get_parent().unwrap().assume_safe()
+                .call("load_script", &[
+                    Variant::new(feature_path + GodotString::from(".gd"))
+                ])
+                .to_object::<Script>().unwrap();
 
             // Attempt to spawn feature.
             self.spawn_feature(
                 owner,
                 &mut data,
                 feature_scene,
+                feature_script,
                 feature_position,
                 true
             );
@@ -124,13 +131,10 @@ impl FeatureGenerator {
     }
 
 
-    unsafe fn spawn_feature(&self, owner : &Node, data : &mut FeatureGeneratorData, feature_scene : Ref<PackedScene>, feature_position : Vector3, spread_allowed : bool) -> () {
-        
-        // TODO : Use static functions to remove need for instancing and destrutcion.
-        let feature = feature_scene.assume_safe().instance(0).unwrap();
-    
+    unsafe fn spawn_feature(&self, owner : &Node, data : &mut FeatureGeneratorData, feature_scene : Ref<PackedScene>, feature_script : Ref<Script>, feature_position : Vector3, spread_allowed : bool) -> () {
+
         // Check random chance.
-        if (data.rng.randf_range(0.0, 1.0) <= feature.assume_safe()
+        if (data.rng.randf_range(0.0, 1.0) <= feature_script.assume_safe()
             .call("get_spawn_chance", &[
                 Variant::new(owner.get_parent().unwrap()),
                 Variant::new(feature_position)
@@ -140,20 +144,20 @@ impl FeatureGenerator {
 
             let success = self.check_spawn_allowed(
                 owner,
-                feature,
+                feature_script.clone(),
                 feature_position,
                 merge_dictionary(data.features.duplicate(), data.other_features.duplicate())
             );
             if (success) {
                 // Can place feature, add to to-be-placed list.
-                data.features.insert(Variant::new(feature_position), feature);
+                data.features.insert(Variant::new(feature_position), feature_scene.assume_safe().instance(0));
 
                 // Get spreads.
                 if (spread_allowed) {
                     for _i in 0..(
                         data.rng.randi_range(
                             0,
-                            feature.assume_safe()
+                            feature_script.assume_safe()
                                 .call("get_spread_count", &[])
                                 .to::<i64>().unwrap()
                         ) + 1
@@ -163,7 +167,7 @@ impl FeatureGenerator {
                         let spread_angle = data.rng.randf_range(-3.1415, 3.1415);
                         let spread_range = data.rng.randf_range(
                             0.0,
-                            feature.assume_safe()
+                            feature_script.assume_safe()
                                 .call("get_spread_range", &[])
                                 .to::<f64>().unwrap()
                         );
@@ -187,6 +191,7 @@ impl FeatureGenerator {
                             owner,
                             data,
                             feature_scene.clone(),
+                            feature_script.clone(),
                             spread_position,
                             false
                         );
@@ -203,15 +208,12 @@ impl FeatureGenerator {
 
             }
 
-            // Failed to place feature, destroy object.
-            feature.assume_safe().queue_free();
-
         }
 
     }
 
 
-    unsafe fn check_spawn_allowed(&self, owner : &Node, feature : Ref<Node>, feature_position : Vector3, all_features : Dictionary<Unique>) -> bool {
+    unsafe fn check_spawn_allowed(&self, owner : &Node, feature_script : Ref<Script>, feature_position : Vector3, all_features : Dictionary<Unique>) -> bool {
         let mut success = true;
         if (success) {
             // Check if ceiling is high enough.
@@ -220,7 +222,7 @@ impl FeatureGenerator {
                     Variant::new(Vector2::new(feature_position.x, feature_position.z))
                 ])
                 .try_to::<f32>().unwrap();
-            let required_height = feature.assume_safe()
+            let required_height = feature_script.assume_safe()
                 .call("get_required_height", &[])
                 .to::<f32>().unwrap();
             success = height > required_height;
@@ -239,7 +241,7 @@ impl FeatureGenerator {
                         other_feature.assume_safe()
                             .call("get_required_radius", &[])
                             .to::<f32>().unwrap(),
-                        feature.assume_safe()
+                            feature_script.assume_safe()
                             .call("get_required_radius", &[])
                             .to::<f32>().unwrap()
                     )

@@ -4,11 +4,14 @@ extends Spatial
 
 const CHUNK : PackedScene = preload('res://main/game/chunk.tscn')
 
+export(int)            var world_seed              : int            = 0
 export(VoxelGenerator) var generator               : VoxelGenerator
 export(int, 1, 100)    var feature_placement_tries : int            = 10
 
-var chunks  : Dictionary = {}
-var threads : Array      = []
+var chunks       : Dictionary = {}
+var scene_cache  : Dictionary = {}
+var script_cache : Dictionary = {}
+var threads      : Array      = []
 
 var Feature : Dictionary = {
 	Mushroom = preload('res://main/game/feature/foliage/mushroom.tscn'),
@@ -18,6 +21,8 @@ var Feature : Dictionary = {
 
 
 func _ready() -> void:
+	generator.world_seed = hash(world_seed)
+	$feature_generator.seed = hash(world_seed + 1)
 	$terrain.generator = generator
 
 
@@ -62,18 +67,19 @@ func chunk_generated(features : Dictionary, chunk_coordinates : Vector2) -> void
 
 
 func load_scene(path : String) -> PackedScene:
-	return load(path) as PackedScene
+	if (not scene_cache.has(path)):
+		scene_cache[path] = load(path)
+	return scene_cache[path]
+
+func load_script(path : String) -> Script:
+	if (not script_cache.has(path)):
+		script_cache[path] = load(path)
+	return script_cache[path]
 
 
 
 func get_generator() -> VoxelGenerator:
 	return generator
-
-func get_required_height(feature : PackedScene) -> float:
-	return feature.get_required_height()
-
-func get_required_radius(feature : PackedScene) -> float:
-	return feature.get_required_radius()
 
 
 func get_elevation_at_coordinates(coordinates : Vector2) -> float:
