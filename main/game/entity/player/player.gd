@@ -167,9 +167,6 @@ func _input(event : InputEvent) -> void:
 			$pivot/camera.rotation.x  = clamp($pivot/camera.rotation.x - (event.relative.y * mouse_sensitivity), -PI / 2.0, PI / 2.0)
 			rotation.y               -= event.relative.x * mouse_sensitivity
 			$pivot/hands.rotation.x   = $pivot/camera.rotation.x / 4.0
-		# Release mouse on escape pressed if controlling.
-		elif (event is InputEventKey and event.scancode == KEY_ESCAPE):
-			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func _notification(what : int) -> void:
 	# Capture mouse on mouse enter window if controlling.

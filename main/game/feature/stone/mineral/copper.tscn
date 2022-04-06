@@ -1,0 +1,32 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://main/game/feature/stone/mineral/copper.gd" type="Script" id=1]
+[ext_resource path="res://assets/model/feature/stone/mineral/copper.obj" type="ArrayMesh" id=2]
+[ext_resource path="res://assets/shader/feature/stone/mineral/copper.tres" type="Shader" id=3]
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = ExtResource( 3 )
+
+[sub_resource type="CylinderShape" id=1]
+radius = 3.0
+height = 3.0
+
+[sub_resource type="SphereShape" id=2]
+radius = 2.75
+
+[node name="copper" type="StaticBody"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource( 1 )
+
+[node name="mesh" type="MeshInstance" parent="."]
+transform = Transform( 1.5, 0, 0, 0, 1, 0, 0, 0, 1.5, 0, 1.5, 0 )
+mesh = ExtResource( 2 )
+material/0 = SubResource( 3 )
+
+[node name="shape" type="CollisionShape" parent="."]
+shape = SubResource( 1 )
+
+[node name="cap" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0 )
+shape = SubResource( 2 )

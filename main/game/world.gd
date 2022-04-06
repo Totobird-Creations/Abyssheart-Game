@@ -28,3 +28,11 @@ func _process(_delta : float) -> void:
 		$terroir/terrain.get_material(0).set_shader_param("debug_mode", debug_enabled)
 		$environment.environment.ambient_light_energy = ambient_light
 		$canvas/interface/debug.visible               = debug_enabled
+
+
+
+func _input(event : InputEvent) -> void:
+	if (event is InputEventKey):
+		# Close game on escape pressed.
+		if (event.scancode == KEY_ESCAPE):
+			get_tree().quit(0)

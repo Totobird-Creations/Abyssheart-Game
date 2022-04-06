@@ -53,7 +53,7 @@ material/0 = SubResource( 6 )
 [node name="feature_generator" type="Node" parent="terroir"]
 script = ExtResource( 7 )
 features/max_fails = 5
-features/scenes = PoolStringArray( "res://main/game/feature/stone/pillar", "res://main/game/feature/stone/boulder", "res://main/game/feature/foliage/mushroom", "res://main/game/feature/foliage/spore" )
+features/scenes = PoolStringArray( "res://main/game/feature/stone/pillar", "res://main/game/feature/stone/boulder", "res://main/game/feature/foliage/mushroom", "res://main/game/feature/foliage/spore", "res://main/game/feature/stone/mineral/copper" )
 
 [node name="entities" type="Spatial" parent="."]
 

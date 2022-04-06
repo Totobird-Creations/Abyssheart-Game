@@ -1,0 +1,59 @@
+[gd_resource type="Shader" format=2]
+
+[resource]
+code = "shader_type spatial;
+
+
+
+vec4 mod289(vec4 x, int seed){return x - floor(x * (1.0 / 289.0)) * (289.0 + float(seed));}
+vec4 perm(vec4 x, int seed){return mod289(((x * 34.0) + 1.0) * x, seed);}
+float noise(vec3 p, int seed){
+    vec3 a = floor(p);
+    vec3 d = p - a;
+    d = d * d * (3.0 - 2.0 * d);
+    vec4 b = a.xxyy + vec4(0.0, 1.0, 0.0, 1.0);
+    vec4 k1 = perm(b.xyxy, seed);
+    vec4 k2 = perm(k1.xyxy + b.zzww, seed);
+    vec4 c = k2 + a.zzzz;
+    vec4 k3 = perm(c, seed);
+    vec4 k4 = perm(c + 1.0, seed);
+    vec4 o1 = fract(k3 * (1.0 / 41.0));
+    vec4 o2 = fract(k4 * (1.0 / 41.0));
+    vec4 o3 = o2 * d.z + o1 * (1.0 - d.z);
+    vec2 o4 = o3.yw * d.x + o3.xz * (1.0 - d.x);
+    return o4.y * d.y + o4.x * (1.0 - d.y);
+}
+
+
+
+float interpolate_float(float a, float b, float t) {
+	return a + (b - a) * t;
+}
+vec3 interpolate_vec3(vec3 a, vec3 b, float t) {
+	return a + (b - a) * t;
+}
+
+
+
+varying vec3 vtx;
+
+
+
+void vertex() {
+	vtx = VERTEX;
+}
+
+
+
+void fragment() {
+	float t = clamp(
+		1.0 - pow(abs(noise(vtx, 0) - 0.5) * 8.0, 2.0),
+		0.0, 1.0
+	);
+
+	ALBEDO    = interpolate_vec3(vec3(0.25, 0.25, 0.25), vec3(1.0, 0.2, 0.0), t);
+	SPECULAR  = interpolate_float(0.0, 0.75, t);
+	ROUGHNESS = interpolate_float(1.0, 0.0, t);
+	METALLIC  = interpolate_float(0.0, 0.75, t);
+}
+"
