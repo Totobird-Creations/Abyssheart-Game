@@ -1,13 +1,16 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=25 format=2]
 
 [ext_resource path="res://assets/font/oxanium/regular.ttf" type="DynamicFontData" id=1]
-[ext_resource path="res://main/game/hotbar.gd" type="Script" id=2]
+[ext_resource path="res://main/game/interface/hotbar.gd" type="Script" id=2]
 [ext_resource path="res://assets/font/oxanium/bold.ttf" type="DynamicFontData" id=3]
 [ext_resource path="res://assets/texture/interface/slot/off.png" type="Texture" id=4]
 [ext_resource path="res://main/game/interface/slot.tscn" type="PackedScene" id=5]
 [ext_resource path="res://main/game/interface/crosshair.gd" type="Script" id=6]
-[ext_resource path="res://main/game/canvas.gd" type="Script" id=7]
+[ext_resource path="res://main/game/interface/interface.gd" type="Script" id=7]
+[ext_resource path="res://main/game/interface/click_detect.gd" type="Script" id=8]
 [ext_resource path="res://main/game/interface/crosshair_point.tscn" type="PackedScene" id=9]
+
+[sub_resource type="StyleBoxEmpty" id=44]
 
 [sub_resource type="Gradient" id=20]
 offsets = PoolRealArray( 0, 0.5, 1 )
@@ -77,7 +80,63 @@ tracks/0/keys = {
 "times": PoolRealArray( 0, 0.125, 0.175, 0.3, 0.425, 0.475, 0.6, 0.725, 0.775, 0.9 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Color( 0, 0, 0, 0.498039 ), Color( 1, 0, 0, 0.74902 ), Color( 1, 0, 0, 0.74902 ), Color( 0, 0, 0, 0.498039 ), Color( 1, 0, 0, 0.74902 ), Color( 1, 0, 0, 0.74902 ), Color( 0, 0, 0, 0.498039 ), Color( 1, 0, 0, 0.74902 ), Color( 1, 0, 0, 0.74902 ), Color( 0, 0, 0, 0.498039 ) ]
+"values": [ Color( 0, 0, 0, 1 ), Color( 1, 0, 0, 1 ), Color( 1, 0, 0, 1 ), Color( 0, 0, 0, 1 ), Color( 1, 0, 0, 1 ), Color( 1, 0, 0, 1 ), Color( 0, 0, 0, 1 ), Color( 1, 0, 0, 1 ), Color( 1, 0, 0, 1 ), Color( 0, 0, 0, 1 ) ]
+}
+
+[sub_resource type="Animation" id=43]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("left:anchor_left")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ -0.5 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("left:anchor_right")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ -0.5 ]
+}
+
+[sub_resource type="Animation" id=42]
+resource_name = "main"
+length = 0.25
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("left:anchor_left")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.25 ),
+"transitions": PoolRealArray( 0.25, 1 ),
+"update": 0,
+"values": [ -0.5, 0.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("left:anchor_right")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.25 ),
+"transitions": PoolRealArray( 0.25, 1 ),
+"update": 0,
+"values": [ -0.5, 0.0 ]
 }
 
 [sub_resource type="DynamicFont" id=37]
@@ -130,9 +189,24 @@ tracks/0/keys = {
 [node name="interface" type="CanvasLayer"]
 script = ExtResource( 7 )
 
+[node name="world_processing" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
 [node name="interface" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+
+[node name="click_detect" type="Button" parent="interface"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_styles/hover = SubResource( 44 )
+custom_styles/pressed = SubResource( 44 )
+custom_styles/focus = SubResource( 44 )
+custom_styles/disabled = SubResource( 44 )
+custom_styles/normal = SubResource( 44 )
+action_mode = 0
+script = ExtResource( 8 )
 
 [node name="bars" type="HBoxContainer" parent="interface"]
 anchor_top = 1.0
@@ -169,24 +243,33 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 margin_left = -256.0
-margin_top = -128.0
+margin_top = -120.0
 margin_right = 256.0
 margin_bottom = -88.0
+size_flags_horizontal = 3
+
+[node name="border" type="ColorRect" parent="interface/stamina"]
+anchor_right = 1.0
+anchor_bottom = 1.0
 size_flags_horizontal = 3
 
 [node name="background" type="ColorRect" parent="interface/stamina"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_left = 2.0
+margin_top = 2.0
+margin_right = -2.0
+margin_bottom = -2.0
 size_flags_horizontal = 3
 color = Color( 0, 0, 0, 0.498039 )
 
 [node name="container" type="Control" parent="interface/stamina/background"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 8.0
-margin_top = 8.0
-margin_right = -8.0
-margin_bottom = -8.0
+margin_left = 2.0
+margin_top = 2.0
+margin_right = -2.0
+margin_bottom = -2.0
 
 [node name="bar" type="ColorRect" parent="interface/stamina/background/container"]
 anchor_right = 1.0
@@ -216,64 +299,264 @@ script = ExtResource( 2 )
 margin_left = 686.0
 margin_right = 750.0
 margin_bottom = 64.0
-auto_hover = false
 icon = ExtResource( 4 )
-highlight = Color( 0.25098, 1, 0.74902, 1 )
+highlight_colour = Color( 0.25098, 1, 0.74902, 1 )
 
 [node name="1" parent="interface/hotbar" instance=ExtResource( 5 )]
 margin_left = 754.0
 margin_right = 818.0
 margin_bottom = 64.0
-auto_hover = false
-hovered = true
+highlight = true
 
 [node name="2" parent="interface/hotbar" instance=ExtResource( 5 )]
 margin_left = 822.0
 margin_right = 886.0
 margin_bottom = 64.0
-auto_hover = false
 
 [node name="3" parent="interface/hotbar" instance=ExtResource( 5 )]
 margin_left = 890.0
 margin_right = 954.0
 margin_bottom = 64.0
-auto_hover = false
 
 [node name="4" parent="interface/hotbar" instance=ExtResource( 5 )]
 margin_left = 958.0
 margin_right = 1022.0
 margin_bottom = 64.0
-auto_hover = false
 
 [node name="5" parent="interface/hotbar" instance=ExtResource( 5 )]
 margin_left = 1026.0
 margin_right = 1090.0
 margin_bottom = 64.0
-auto_hover = false
 
 [node name="6" parent="interface/hotbar" instance=ExtResource( 5 )]
 margin_left = 1094.0
 margin_right = 1158.0
 margin_bottom = 64.0
-auto_hover = false
 
 [node name="7" parent="interface/hotbar" instance=ExtResource( 5 )]
 margin_left = 1162.0
 margin_right = 1226.0
 margin_bottom = 64.0
-auto_hover = false
 
 [node name="8" parent="interface/hotbar" instance=ExtResource( 5 )]
 margin_left = 1230.0
 margin_right = 1294.0
 margin_bottom = 64.0
-auto_hover = false
 
 [node name="9" parent="interface/hotbar" instance=ExtResource( 5 )]
 margin_left = 1298.0
 margin_right = 1362.0
 margin_bottom = 64.0
-auto_hover = false
+
+[node name="inventory" type="Control" parent="interface"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 80.0
+margin_top = 80.0
+margin_right = -80.0
+margin_bottom = -256.0
+mouse_filter = 2
+
+[node name="left" type="Control" parent="interface/inventory"]
+anchor_left = -0.5
+anchor_right = -0.5
+margin_right = 644.0
+margin_bottom = 240.0
+
+[node name="background" type="ColorRect" parent="interface/inventory/left"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.498039 )
+
+[node name="vertical" type="VBoxContainer" parent="interface/inventory/left"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 16.0
+margin_top = 16.0
+margin_right = -16.0
+margin_bottom = -16.0
+alignment = 1
+
+[node name="horizontal" type="HBoxContainer" parent="interface/inventory/left/vertical"]
+margin_top = 4.0
+margin_right = 612.0
+margin_bottom = 68.0
+custom_constants/separation = 4
+
+[node name="slot" parent="interface/inventory/left/vertical/horizontal" instance=ExtResource( 5 )]
+margin_right = 64.0
+margin_bottom = 64.0
+
+[node name="slot2" parent="interface/inventory/left/vertical/horizontal" instance=ExtResource( 5 )]
+margin_left = 68.0
+margin_right = 132.0
+margin_bottom = 64.0
+
+[node name="slot3" parent="interface/inventory/left/vertical/horizontal" instance=ExtResource( 5 )]
+margin_left = 136.0
+margin_right = 200.0
+margin_bottom = 64.0
+
+[node name="slot4" parent="interface/inventory/left/vertical/horizontal" instance=ExtResource( 5 )]
+margin_left = 204.0
+margin_right = 268.0
+margin_bottom = 64.0
+
+[node name="slot5" parent="interface/inventory/left/vertical/horizontal" instance=ExtResource( 5 )]
+margin_left = 272.0
+margin_right = 336.0
+margin_bottom = 64.0
+
+[node name="slot6" parent="interface/inventory/left/vertical/horizontal" instance=ExtResource( 5 )]
+margin_left = 340.0
+margin_right = 404.0
+margin_bottom = 64.0
+
+[node name="slot7" parent="interface/inventory/left/vertical/horizontal" instance=ExtResource( 5 )]
+margin_left = 408.0
+margin_right = 472.0
+margin_bottom = 64.0
+
+[node name="slot8" parent="interface/inventory/left/vertical/horizontal" instance=ExtResource( 5 )]
+margin_left = 476.0
+margin_right = 540.0
+margin_bottom = 64.0
+
+[node name="slot9" parent="interface/inventory/left/vertical/horizontal" instance=ExtResource( 5 )]
+margin_left = 544.0
+margin_right = 608.0
+margin_bottom = 64.0
+
+[node name="horizontal2" type="HBoxContainer" parent="interface/inventory/left/vertical"]
+margin_top = 72.0
+margin_right = 612.0
+margin_bottom = 136.0
+custom_constants/separation = 4
+
+[node name="slot" parent="interface/inventory/left/vertical/horizontal2" instance=ExtResource( 5 )]
+margin_right = 64.0
+margin_bottom = 64.0
+
+[node name="slot2" parent="interface/inventory/left/vertical/horizontal2" instance=ExtResource( 5 )]
+margin_left = 68.0
+margin_right = 132.0
+margin_bottom = 64.0
+
+[node name="slot3" parent="interface/inventory/left/vertical/horizontal2" instance=ExtResource( 5 )]
+margin_left = 136.0
+margin_right = 200.0
+margin_bottom = 64.0
+
+[node name="slot4" parent="interface/inventory/left/vertical/horizontal2" instance=ExtResource( 5 )]
+margin_left = 204.0
+margin_right = 268.0
+margin_bottom = 64.0
+
+[node name="slot5" parent="interface/inventory/left/vertical/horizontal2" instance=ExtResource( 5 )]
+margin_left = 272.0
+margin_right = 336.0
+margin_bottom = 64.0
+
+[node name="slot6" parent="interface/inventory/left/vertical/horizontal2" instance=ExtResource( 5 )]
+margin_left = 340.0
+margin_right = 404.0
+margin_bottom = 64.0
+
+[node name="slot7" parent="interface/inventory/left/vertical/horizontal2" instance=ExtResource( 5 )]
+margin_left = 408.0
+margin_right = 472.0
+margin_bottom = 64.0
+
+[node name="slot8" parent="interface/inventory/left/vertical/horizontal2" instance=ExtResource( 5 )]
+margin_left = 476.0
+margin_right = 540.0
+margin_bottom = 64.0
+
+[node name="slot9" parent="interface/inventory/left/vertical/horizontal2" instance=ExtResource( 5 )]
+margin_left = 544.0
+margin_right = 608.0
+margin_bottom = 64.0
+
+[node name="horizontal3" type="HBoxContainer" parent="interface/inventory/left/vertical"]
+margin_top = 140.0
+margin_right = 612.0
+margin_bottom = 204.0
+custom_constants/separation = 4
+
+[node name="slot" parent="interface/inventory/left/vertical/horizontal3" instance=ExtResource( 5 )]
+margin_right = 64.0
+margin_bottom = 64.0
+
+[node name="slot2" parent="interface/inventory/left/vertical/horizontal3" instance=ExtResource( 5 )]
+margin_left = 68.0
+margin_right = 132.0
+margin_bottom = 64.0
+
+[node name="slot3" parent="interface/inventory/left/vertical/horizontal3" instance=ExtResource( 5 )]
+margin_left = 136.0
+margin_right = 200.0
+margin_bottom = 64.0
+
+[node name="slot4" parent="interface/inventory/left/vertical/horizontal3" instance=ExtResource( 5 )]
+margin_left = 204.0
+margin_right = 268.0
+margin_bottom = 64.0
+
+[node name="slot5" parent="interface/inventory/left/vertical/horizontal3" instance=ExtResource( 5 )]
+margin_left = 272.0
+margin_right = 336.0
+margin_bottom = 64.0
+
+[node name="slot6" parent="interface/inventory/left/vertical/horizontal3" instance=ExtResource( 5 )]
+margin_left = 340.0
+margin_right = 404.0
+margin_bottom = 64.0
+
+[node name="slot7" parent="interface/inventory/left/vertical/horizontal3" instance=ExtResource( 5 )]
+margin_left = 408.0
+margin_right = 472.0
+margin_bottom = 64.0
+
+[node name="slot8" parent="interface/inventory/left/vertical/horizontal3" instance=ExtResource( 5 )]
+margin_left = 476.0
+margin_right = 540.0
+margin_bottom = 64.0
+
+[node name="slot9" parent="interface/inventory/left/vertical/horizontal3" instance=ExtResource( 5 )]
+margin_left = 544.0
+margin_right = 608.0
+margin_bottom = 64.0
+
+[node name="animation" type="AnimationPlayer" parent="interface/inventory"]
+anims/RESET = SubResource( 43 )
+anims/main = SubResource( 42 )
+
+[node name="drag_item" type="Control" parent="interface"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="crosshair" type="Control" parent="interface"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -8.0
+margin_top = -8.0
+margin_right = 8.0
+margin_bottom = 8.0
+script = ExtResource( 6 )
+
+[node name="top" parent="interface/crosshair" instance=ExtResource( 9 )]
+
+[node name="right" parent="interface/crosshair" instance=ExtResource( 9 )]
+rect_rotation = 90.0
+
+[node name="down" parent="interface/crosshair" instance=ExtResource( 9 )]
+rect_rotation = 180.0
+
+[node name="left" parent="interface/crosshair" instance=ExtResource( 9 )]
+rect_rotation = 270.0
 
 [node name="debug" type="Control" parent="interface"]
 visible = false
@@ -501,24 +784,4 @@ may cause unintended performance loss.
 Only open this menu when it is necessary."
 align = 2
 
-[node name="crosshair" type="Control" parent="interface"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -8.0
-margin_top = -8.0
-margin_right = 8.0
-margin_bottom = 8.0
-script = ExtResource( 6 )
-
-[node name="top" parent="interface/crosshair" instance=ExtResource( 9 )]
-
-[node name="right" parent="interface/crosshair" instance=ExtResource( 9 )]
-rect_rotation = 90.0
-
-[node name="down" parent="interface/crosshair" instance=ExtResource( 9 )]
-rect_rotation = 180.0
-
-[node name="left" parent="interface/crosshair" instance=ExtResource( 9 )]
-rect_rotation = 270.0
+[connection signal="pressed" from="interface/click_detect" to="interface/click_detect" method="left_click"]

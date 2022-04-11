@@ -1,6 +1,39 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://main/game/interface/slot.gd" type="Script" id=1]
+[ext_resource path="res://assets/font/oxanium/bold.ttf" type="DynamicFontData" id=2]
+
+[sub_resource type="Animation" id=7]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("background:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ) ]
+}
+
+[sub_resource type="Animation" id=6]
+resource_name = "main"
+length = 0.15
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("background:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.15 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
 
 [sub_resource type="Shader" id=1]
 code = "shader_type canvas_item;
@@ -21,7 +54,7 @@ void fragment() {
 
 [sub_resource type="ShaderMaterial" id=5]
 shader = SubResource( 1 )
-shader_param/border_colour = Color( 1, 1, 1, 1 )
+shader_param/border_colour = Color( 0, 0, 0, 1 )
 shader_param/border_width = 0.05
 
 [sub_resource type="ShaderMaterial" id=2]
@@ -86,10 +119,13 @@ tracks/1/keys = {
 "values": [ 0.0, 0.05 ]
 }
 
+[sub_resource type="DynamicFont" id=8]
+size = 24
+font_data = ExtResource( 2 )
+
 [node name="slot" type="Control"]
 rect_min_size = Vector2( 64, 64 )
 script = ExtResource( 1 )
-highlight = Color( 0.25098, 0.74902, 1, 1 )
 
 [node name="separation" type="ColorRect" parent="."]
 anchor_right = 1.0
@@ -105,17 +141,34 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color( 0.247059, 0.247059, 0.247059, 1 )
 
+[node name="hover" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="background" type="ColorRect" parent="hover"]
+modulate = Color( 1, 1, 1, 0 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color( 1, 1, 1, 0.74902 )
+
+[node name="animation" type="AnimationPlayer" parent="hover"]
+anims/RESET = SubResource( 7 )
+anims/main = SubResource( 6 )
+
 [node name="border" type="ColorRect" parent="."]
 material = SubResource( 5 )
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 color = Color( 1, 1, 1, 0 )
 
 [node name="highlight" type="ColorRect" parent="."]
-modulate = Color( 0.25098, 0.74902, 1, 1 )
+modulate = Color( 0.25, 0.75, 1, 1 )
 material = SubResource( 2 )
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 color = Color( 1, 1, 1, 0 )
 
 [node name="animation" type="AnimationPlayer" parent="highlight"]
@@ -123,14 +176,29 @@ root_node = NodePath("../..")
 anims/RESET = SubResource( 4 )
 anims/main = SubResource( 3 )
 
-[node name="hover" type="Control" parent="."]
+[node name="item" type="ViewportContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
+stretch = true
 
-[node name="icon" type="TextureRect" parent="."]
+[node name="viewport" type="Viewport" parent="item"]
+size = Vector2( 64, 64 )
+own_world = true
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 3
+
+[node name="label" type="Label" parent="item"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-expand = true
+margin_left = 4.0
+margin_top = 4.0
+margin_right = -4.0
+margin_bottom = -4.0
+custom_fonts/font = SubResource( 8 )
+align = 2
+valign = 2
 
 [connection signal="mouse_entered" from="hover" to="." method="hover"]
 [connection signal="mouse_exited" from="hover" to="." method="unhover"]

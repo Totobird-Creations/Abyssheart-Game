@@ -5,3 +5,9 @@
 export_presets.cfg
 .import/
 **/*.import
+discord_sdk/*.gdns
+discord_sdk/*.gdnlib
+discord_sdk/*.gd
+bin/linux-64/*.so
+bin/osx-64/*.dylib
+bin/windows-64/*.dll

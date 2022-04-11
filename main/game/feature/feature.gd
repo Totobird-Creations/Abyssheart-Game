@@ -13,6 +13,8 @@ var active              : bool = false
 
 
 
+
+
 func _ready() -> void:
 	var rng  : RandomNumberGenerator = RandomNumberGenerator.new()
 	rng.seed                         = feature_seed
@@ -84,3 +86,18 @@ static func get_spread_count() -> int:
 
 static func get_spread_range() -> float:
 	return 0.0
+
+
+
+func left_clicked_world() -> void:
+	pass
+
+func right_clicked_world() -> void:
+	pass
+
+
+
+
+
+func get_game_world() -> Node:
+	return get_parent().get_parent().get_parent().get_parent()

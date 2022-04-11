@@ -26,6 +26,8 @@ ambient_light_energy = 0.0
 fog_enabled = true
 fog_color = Color( 0, 0, 0, 1 )
 fog_sun_color = Color( 0, 0, 0, 1 )
+fog_depth_begin = 48.0
+fog_depth_end = 64.0
 glow_enabled = true
 glow_levels/1 = true
 glow_blend_mode = 0
@@ -52,6 +54,7 @@ material/0 = SubResource( 6 )
 
 [node name="feature_generator" type="Node" parent="terroir"]
 script = ExtResource( 7 )
+seed = null
 features/max_fails = 5
 features/scenes = PoolStringArray( "res://main/game/feature/stone/pillar", "res://main/game/feature/stone/boulder", "res://main/game/feature/foliage/mushroom", "res://main/game/feature/foliage/spore", "res://main/game/feature/stone/mineral/copper" )
 

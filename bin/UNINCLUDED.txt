@@ -1,0 +1,4 @@
+Some contents of this folder are unincluded.
+To use this repository, please:
+- Run the build executables in the .gdignore/gdnative directory.
+- Follow the installation instructions at https://github.com/LennyPhoenix/GodotDiscordSDK-ProjectTemplate in this directory.

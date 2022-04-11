@@ -1,0 +1,3 @@
+The contents of this folder are unincluded.
+To use this repository, please:
+- Copy the contents of https://github.com/LennyPhoenix/GodotDiscordSDK-ProjectTemplate/tree/main/discord_sdk to this directory.

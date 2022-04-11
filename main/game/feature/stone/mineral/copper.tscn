@@ -1,11 +1,18 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://main/game/feature/stone/mineral/copper.gd" type="Script" id=1]
 [ext_resource path="res://assets/model/feature/stone/mineral/copper.obj" type="ArrayMesh" id=2]
 [ext_resource path="res://assets/shader/feature/stone/mineral/copper.tres" type="Shader" id=3]
 
+[sub_resource type="Curve" id=4]
+_data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 0.508772, 0 ), 0.0, 0.0, 0, 0, Vector2( 0.576998, 0.554545 ), 3.52924, 3.52924, 0, 0, Vector2( 1, 1 ), 6.94936e-07, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=5]
+curve = SubResource( 4 )
+
 [sub_resource type="ShaderMaterial" id=3]
 shader = ExtResource( 3 )
+shader_param/oxidized_curve = SubResource( 5 )
 
 [sub_resource type="CylinderShape" id=1]
 radius = 3.0

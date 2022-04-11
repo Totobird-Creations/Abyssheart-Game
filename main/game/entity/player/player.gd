@@ -1,4 +1,4 @@
-extends KinematicBody
+extends Entity
 class_name PlayerEntity
 
 
@@ -41,18 +41,10 @@ var snap            : Vector3 = Vector3.ZERO
 
 
 
-func _enter_tree() -> void:
-	# Capture mouse on entity initialisation if controlling.
-	if (controlling):
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-
-func _exit_tree() -> void:
-	# Release mouse on entity destruction if controlling.
-	if (controlling):
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func _ready() -> void:
-	$pivot/camera/camera.current = controlling
+	if (controlling):
+		$pivot/camera/camera.make_current()
 
 
 
@@ -153,20 +145,35 @@ func _physics_process(delta : float) -> void:
 	stamina_timer = clamp(stamina_timer - delta, 0.0, stamina_cooldown)
 
 	# Debug
-	if (get_parent().get_parent().render_mode == get_parent().get_parent().RenderMode.Debug):
-		get_node("../../canvas").data_position = translation
-		get_node("../../canvas").data_velocity = velocity
-		get_node("../../canvas").data_rotation = Vector2(rotation.y, $pivot/camera.rotation.x)
+	if (get_game_world().render_mode == get_game_world().RenderMode.Debug):
+		get_interface().data_position = translation
+		get_interface().data_velocity = velocity
+		get_interface().data_rotation = Vector2(rotation.y, $pivot/camera.rotation.x)
 
 
 
 func _input(event : InputEvent) -> void:
-	if (controlling):
+	if (controlling && get_game_world().mouse_mode == get_game_world().MouseMode.Game):
 		# Rotate camera on mouse motion if controlling.
 		if (event is InputEventMouseMotion):
 			$pivot/camera.rotation.x  = clamp($pivot/camera.rotation.x - (event.relative.y * mouse_sensitivity), -PI / 2.0, PI / 2.0)
 			rotation.y               -= event.relative.x * mouse_sensitivity
 			$pivot/hands.rotation.x   = $pivot/camera.rotation.x / 4.0
+
+		if (event is InputEventMouseButton):
+			if (event.pressed):
+				var collider : Spatial = $pivot/camera/camera/cast.get_collider()
+				if (collider):
+					if (event.button_index == BUTTON_LEFT):
+						if (not get_game_world().left_clicked()):
+							if (collider.has_method("left_clicked_world")):
+								collider.left_clicked_world()
+					if (event.button_index == BUTTON_RIGHT):
+						if (not get_game_world().right_clicked()):
+							if (collider.has_method("right_clicked_world")):
+								collider.right_clicked_world()
+
+
 
 func _notification(what : int) -> void:
 	# Capture mouse on mouse enter window if controlling.
@@ -176,11 +183,13 @@ func _notification(what : int) -> void:
 
 
 
+
+
 func set_health(value : float) -> void:
 	health = clamp(value, 0.0, max_health)
 	# Send value to canvas if controlling.
 	if (controlling):
-		get_node('../../canvas').health_target = health / max_health
+		get_interface().health_target = health / max_health
 
 func set_stamina(value : float) -> void:
 	if (value < stamina):
@@ -192,8 +201,41 @@ func set_stamina(value : float) -> void:
 		stamina_exhaust = false
 	# Send value to canvas if controlling.
 	if (controlling):
-		get_node('../../canvas').stamina_target  = stamina / max_stamina
-		get_node('../../canvas').stamina_exhaust = stamina_exhaust
+		get_interface().stamina_target  = stamina / max_stamina
+		get_interface().stamina_exhaust = stamina_exhaust
 
 func has_stamina(_amount : float = 0.0) -> bool:
 	return (! stamina_exhaust)# && stamina > amount
+
+
+
+func set_mainhand_item(item : Item) -> void:
+	for child in $pivot/hands/right.get_children():
+		child.queue_free()
+	if (item != null):
+		var instance : Item = load(item.filename).instance()
+		instance.set_state(Item.State.Hand)
+		$pivot/hands/right.add_child(instance)
+
+func set_offhand_item(item : Item) -> void:
+	for child in $pivot/hands/left.get_children():
+		child.queue_free()
+	if (item != null):
+		var instance : Item = load(item.filename).instance()
+		instance.set_state(Item.State.Hand)
+		$pivot/hands/left.add_child(instance)
+
+
+
+func get_camera() -> Node:
+	return $pivot/camera/camera
+
+
+
+
+
+func drop_item(instance : Node) -> void:
+	var anchor : Vector3 = $pivot/camera/camera.get_global_transform().basis.z
+	instance.state = Item.State.Ground
+	instance.translation = $pivot/camera/camera.to_global($pivot/camera/camera.translation) - anchor + Vector3(rand_range(-1.0, 1.0), rand_range(-1.0, 1.0), rand_range(-1.0, 1.0) * 0.25)
+	get_entities().add_child(instance)

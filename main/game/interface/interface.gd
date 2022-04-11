@@ -2,6 +2,8 @@ extends CanvasLayer
 
 
 
+const DRAG_ITEM : PackedScene = preload("res://main/game/interface/drag_item.tscn")
+
 var health_target        : float   = 1.0
 var stamina_target       : float   = 1.0
 var stamina_exhaust      : bool    = false
@@ -11,6 +13,8 @@ var data_velocity        : Vector3 = Vector3.ZERO
 var data_rotation        : Vector2 = Vector2.ZERO
 
 var prev_stamina_exhaust : bool    = false
+
+var inventory_open       : bool    = false
 
 
 
@@ -53,3 +57,21 @@ func _physics_process(delta : float) -> void:
 		$interface/debug/left/value/temperature .text = str(get_node("../terroir").get_generator().get_temperature(coordinates))
 		$interface/debug/left/value/humidity    .text = str(get_node("../terroir").get_generator().get_humidity(coordinates))
 		$interface/debug/left/value/mushiness   .text = str(get_node("../terroir").get_generator().get_mushiness(coordinates))
+
+
+
+
+
+func has_drag_item() -> bool:
+	return $interface/drag_item.get_child_count() > 0
+
+func add_drag_item(item : RigidBody, count : int) -> void:
+	var instance : ViewportContainer = DRAG_ITEM.instance()
+	instance.set_item(item, count)
+	$interface/drag_item.add_child(instance)
+
+func get_drag_item() -> Node:
+	if (has_drag_item()):
+		return $interface/drag_item.get_child(0)
+	else:
+		return null

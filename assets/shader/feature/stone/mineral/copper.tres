@@ -35,6 +35,8 @@ vec3 interpolate_vec3(vec3 a, vec3 b, float t) {
 
 
 
+uniform sampler2D oxidized_curve;
+
 varying vec3 vtx;
 
 
@@ -46,14 +48,48 @@ void vertex() {
 
 
 void fragment() {
-	float t = clamp(
+	float stone_copper = clamp(
 		1.0 - pow(abs(noise(vtx, 0) - 0.5) * 8.0, 2.0),
 		0.0, 1.0
 	);
+	float copper_oxidised = texture(oxidized_curve, vec2(
+		clamp(noise(vtx, 1), 0.0, 1.0),
+	0.0)).r;
 
-	ALBEDO    = interpolate_vec3(vec3(0.25, 0.25, 0.25), vec3(1.0, 0.2, 0.0), t);
-	SPECULAR  = interpolate_float(0.0, 0.75, t);
-	ROUGHNESS = interpolate_float(1.0, 0.0, t);
-	METALLIC  = interpolate_float(0.0, 0.75, t);
+	ALBEDO = interpolate_vec3(
+		vec3(0.25, 0.25, 0.25),
+		interpolate_vec3(
+			vec3(1.0, 0.2, 0.0),
+			vec3(0.25, 0.75, 0.5),
+			copper_oxidised
+		),
+		stone_copper
+	);
+	SPECULAR = interpolate_float(
+		0.0,
+		interpolate_float(
+			0.75,
+			0.1,
+			copper_oxidised
+		),
+		stone_copper
+	);
+	ROUGHNESS = interpolate_float(
+		1.0,
+		interpolate_float(
+			0.0,
+			0.75,
+			copper_oxidised
+		),
+		stone_copper
+	);
+	METALLIC = interpolate_float(
+		0.0,
+		interpolate_float(
+			0.75,
+			0.5,
+			copper_oxidised
+		),
+		stone_copper);
 }
 "

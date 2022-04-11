@@ -29,13 +29,15 @@ func set_selected(value : int) -> void:
 			value = 1
 		elif (value < 1):
 			value = get_child_count() - 1
-		get_child(selected).hovered = false
-		get_child(value).hovered = true
+		get_child(selected).set_highlight(false)
+		get_child(value).set_highlight(true)
+		get_parent().get_parent().get_parent().get_player().set_mainhand_item(get_child(value).get_item())
 		selected = value
 
 
 
 func set_off_selected(value : bool) -> void:
 	if (value != off_selected):
-		get_child(0).hovered = value
+		get_child(0).set_highlight(value)
+		get_parent().get_parent().get_parent().get_player().set_offhand_item(get_child(0).get_item())
 		off_selected = value
